@@ -19,7 +19,8 @@ locals {
 
 
 resource "aws_cloudwatch_log_group" "log_group" {
-  name = join("-", [var.server_name], "log-group")
+  name              = join("-", [var.server_name], "log-group")
+  retention_in_days = var.log_retention_in_days
 
   tags = {
     Environment = var.environment

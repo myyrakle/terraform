@@ -18,6 +18,13 @@ variable "server_name" {
   type        = string
 }
 
+// 로그 삭제 대기일수. (14=14일, 0=삭제하지않음)
+variable "log_retention_in_days" {
+  description = "The name of the server machine you want to create."
+  type        = number
+  default     = 0
+}
+
 # variable "github_repository" {
 #   description = "The name of the github repository."
 #   type        = string
