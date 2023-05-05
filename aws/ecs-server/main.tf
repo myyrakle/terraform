@@ -92,7 +92,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 
 // 로드밸런싱에 사용할 대상 그룹
 resource "aws_lb_target_group" "target_group_blue" {
-  name             = local.resource_id
+  name             = "${local.resource_id}-blue"
   port             = var.target_group_port
   protocol_version = var.target_group_protocol_version
   protocol         = var.target_group_protocol
@@ -114,7 +114,7 @@ resource "aws_lb_target_group" "target_group_blue" {
 
 // Blue Green 배포에 사용할 대상 그룹
 resource "aws_lb_target_group" "target_group_green" {
-  name             = local.resource_id
+  name             = "${local.resource_id}-green"
   port             = var.target_group_port
   protocol_version = var.target_group_protocol_version
   protocol         = var.target_group_protocol
@@ -202,6 +202,10 @@ resource "aws_ecs_service" "ecs_service" {
     target_group_arn = aws_lb_target_group.target_group_blue.arn
     container_name   = local.resource_id
     container_port   = var.portforward_container_port
+  }
+
+  deployment_controller {
+    type = "CODE_DEPLOY"
   }
 
   tags = local.tags

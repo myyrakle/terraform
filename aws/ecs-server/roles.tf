@@ -191,6 +191,11 @@ resource "aws_iam_role" "codedeploy_role" {
   tags = local.tags
 }
 
+resource "aws_iam_role_policy_attachment" "codedeploy_role-attach" {
+  role       = aws_iam_role.codedeploy_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
+}
+
 // Code Pipeline에 사용할 role
 resource "aws_iam_role" "codepipeline_role" {
   name = join("-", [var.server_name, var.environment, "codepipeline-role"])

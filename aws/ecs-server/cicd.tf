@@ -112,7 +112,7 @@ resource "aws_codedeploy_deployment_group" "deployment_group" {
   load_balancer_info {
     target_group_pair_info {
       prod_traffic_route {
-        listener_arns = [aws_lb_listener.http_listener.arn, aws_lb_listener.https_listener.arn]
+        listener_arns = [aws_lb_listener.http_listener.arn]
       }
 
       target_group {
@@ -187,11 +187,11 @@ resource "aws_codepipeline" "codepipeline" {
       version         = "1"
 
       configuration = {
-        ClusterName         = aws_ecs_cluster.ecs_cluster.name
-        ServiceName         = aws_ecs_service.ecs_service.name
-        FileName            = "images.json"
-        ApplicationName     = aws_codedeploy_app.deploy.name
-        DeploymentGroupName = aws_codedeploy_deployment_group.deployment_group.name
+        ApplicationName                = aws_codedeploy_app.deploy.name
+        DeploymentGroupName            = aws_codedeploy_deployment_group.deployment_group.deployment_group_name
+        TaskDefinitionTemplateArtifact = "DefinitionArtifact"
+        TaskDefinitionTemplatePath     = "taskdef.json"
+        AppSpecTemplateArtifact        = "DefinitionArtifact"
       }
     }
   }
