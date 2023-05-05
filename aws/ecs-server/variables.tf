@@ -152,3 +152,10 @@ variable "cpu_scail_out_percent" {
   type        = number
   default     = 70
 }
+
+// 스케일아웃을 트리거할 메모리 수치입니다.
+variable "memory_scail_out_percent" {
+  description = "The percent of the cpu scail out. (e.g: 80)"
+  type        = number
+  default     = 70
+}

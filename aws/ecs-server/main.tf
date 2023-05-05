@@ -141,3 +141,22 @@ resource "aws_appautoscaling_policy" "scaling_policy_cpu" {
     scale_out_cooldown = 120
   }
 }
+
+// 메모리 스케일링 정책 구성입니다.
+resource "aws_appautoscaling_policy" "scaling_policy_memory" {
+  name               = "${local.resource_id}-memory-scailing"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.auto_scailing.resource_id
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+    }
+
+    target_value       = var.memory_scail_out_percent
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 120
+  }
+}
