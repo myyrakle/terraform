@@ -49,3 +49,14 @@ resource "aws_ecr_repository" "ecr" {
   image_scanning_configuration {
   }
 }
+
+// ECS 
+// 서버를 배포할 ECS 클러스터입니다. 
+resource "aws_ecs_cluster" "ecs_cluster" {
+  name = join("-", [var.server_name, var.environment])
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
+}
