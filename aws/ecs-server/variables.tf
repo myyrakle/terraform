@@ -88,6 +88,7 @@ variable "certificate_arn" {
 variable "docker_entrypoint" {
   description = "The entrypoint of the docker image. (e.g: \"sh\", \"run.sh\")"
   type        = string
+  default     = "sh run.sh"
 }
 
 // 헬스체크 api 경로
@@ -104,9 +105,11 @@ variable "healthcheck_interval" {
   default     = 30
 }
 
+// 빌드에 사용할 buildspec.yml 위치입니다.
 variable "buildspec_path" {
   description = "BuildSpec file path (e.g: \"/prod/buildspec.yml\")"
   type        = string
+  default     = "buildspec.yml"
 }
 
 // 컨테이너 메모리입니다. 메가바이트 단위입니다.
