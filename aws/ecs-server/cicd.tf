@@ -116,11 +116,11 @@ resource "aws_codedeploy_deployment_group" "deployment_group" {
       }
 
       target_group {
-        name = aws_lb_target_group.blue.name
+        name = aws_lb_target_group.target_group_blue.name
       }
 
       target_group {
-        name = aws_lb_target_group.green.name
+        name = aws_lb_target_group.target_group_green.name
       }
     }
   }
