@@ -129,3 +129,15 @@ resource "aws_lb" "loadbalancer" {
 
   tags = local.tags
 }
+
+// HTTP 리스너
+resource "aws_lb_listener" "http_listener" {
+  load_balancer_arn = aws_lb.loadbalancer.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.target_group.arn
+  }
+}
