@@ -75,3 +75,49 @@ resource "aws_iam_role" "scalable_target_role" {
   tags = local.tags
 }
 
+
+
+// ECS Service에 사용할 role
+resource "aws_iam_role" "ecs_service_role" {
+  name = join("-", [var.server_name, var.environment, "ecs-service-role"])
+
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : ["ecs.amazonaws.com"]
+        },
+        "Action" : ["sts:AssumeRole"]
+      }
+    ]
+  })
+
+  path = "/"
+
+  inline_policy {
+    name    = "ecs-service"
+    version = "2012-10-17"
+    statement = [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+          "elasticloadbalancing:DeregisterTargets",
+          "elasticloadbalancing:Describe*",
+          "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+          "elasticloadbalancing:RegisterTargets",
+          "ec2:Describe*",
+          "ec2:AuthorizeSecurityGroupIngress"
+        ],
+        "Resource" : "*"
+      }
+    ]
+  }
+
+  tags = local.tags
+}
+
