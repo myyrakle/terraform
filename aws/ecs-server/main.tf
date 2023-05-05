@@ -48,6 +48,11 @@ resource "aws_ecr_repository" "ecr" {
 
   image_scanning_configuration {
   }
+
+  tags = {
+    Environment = var.environment
+    Application = var.server_name
+  }
 }
 
 // ECS 
@@ -58,5 +63,10 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   setting {
     name  = "containerInsights"
     value = "enabled"
+  }
+
+  tags = {
+    Environment = var.environment
+    Application = var.server_name
   }
 }
