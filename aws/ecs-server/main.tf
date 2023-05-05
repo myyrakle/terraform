@@ -103,7 +103,6 @@ resource "aws_lb_target_group" "target_group" {
     path                = var.healthcheck_uri
     interval            = var.healthcheck_interval
     protocol            = var.target_group_protocol
-    port                = var.target_group_port
     healthy_threshold   = 5
     unhealthy_threshold = 2
     timeout             = 20
