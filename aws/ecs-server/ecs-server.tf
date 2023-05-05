@@ -14,11 +14,15 @@ provider "aws" {
   region = var.region
 }
 
-resource "aws_instance" "app_server" {
-  ami           = "ami-0e9bfdb247cc8de84" # ami 이미지
-  instance_type = "t2.nano"               # 인스턴스 타입
+locals {
+}
+
+
+resource "aws_cloudwatch_log_group" "log_group" {
+  name = join("-", [var.server_name], "log-group")
 
   tags = {
-    Name = "TestInstance" # 인스턴스명
+    Environment = var.environment
+    Application = var.server_name
   }
 }
