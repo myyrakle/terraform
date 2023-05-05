@@ -1,11 +1,14 @@
+// 아티팩트 버킷
 resource "aws_s3_bucket" "artifact_bucket" {
   tags = local.tags
 }
 
+// 빌드 캐시용 버킷
 resource "aws_s3_bucket" "cache_bucket" {
   tags = local.tags
 }
 
+// code build
 resource "aws_codebuild_project" "codebuild" {
   name          = local.resource_id
   description   = "code build"
@@ -62,6 +65,14 @@ resource "aws_codebuild_project" "codebuild" {
   }
 
   timeout_in_minutes = 30
+
+  tags = local.tags
+}
+
+// code deploy
+resource "aws_codedeploy_app" "deploy" {
+  name             = local.resource_id
+  compute_platform = "ECS"
 
   tags = local.tags
 }
