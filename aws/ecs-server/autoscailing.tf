@@ -2,7 +2,7 @@
 resource "aws_appautoscaling_target" "auto_scailing" {
   max_capacity       = var.auto_scailing_max
   min_capacity       = 1
-  resource_id        = "service/${local.resource_id}/${local.resource_id}"
+  resource_id        = "service/${aws_ecs_service.ecs_service.name}/${aws_ecs_service.ecs_service.name}"
   role_arn           = aws_iam_role.scalable_target_role.arn
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"

@@ -12,7 +12,7 @@ resource "aws_s3_bucket" "cache_bucket" {
 resource "aws_codebuild_project" "codebuild" {
   name          = local.resource_id
   description   = "code build"
-  build_timeout = "5"
+  build_timeout = "30"
   service_role  = aws_iam_role.codebuild_role.arn
 
   artifacts {
@@ -60,11 +60,9 @@ resource "aws_codebuild_project" "codebuild" {
 
   source {
     type      = "S3"
-    location  = "${ArtifactBucket}/source.zip"
+    location  = "${aws_s3_bucket.artifact_bucket.arn}/source.zip"
     buildspec = var.buildspec_path
   }
-
-  timeout_in_minutes = 30
 
   tags = local.tags
 }
@@ -83,7 +81,7 @@ resource "aws_codepipeline" "codepipeline" {
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
-    location = aws_s3_bucket.artifact_bucket
+    location = aws_s3_bucket.artifact_bucket.arn
     type     = "S3"
   }
 

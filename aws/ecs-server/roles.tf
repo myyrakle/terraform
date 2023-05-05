@@ -18,7 +18,7 @@ resource "aws_iam_role" "task_execution_role" {
 
   path = "/"
 
-  inline_policy = {
+  inline_policy {
     name = "root"
     policy = jsonencode({
       Statement = [

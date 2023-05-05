@@ -74,7 +74,7 @@ resource "aws_ecs_task_definition" "task_definition" {
           hostPort      = var.portforward_host_port
         }
       ]
-      entrypoint = var.entrypoint
+      entrypoint = var.docker_entrypoint
     },
   ])
 
