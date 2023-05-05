@@ -145,3 +145,10 @@ variable "auto_scailing_max" {
   type        = number
   default     = 16
 }
+
+// 스케일아웃을 트리거할 cpu 수치입니다.
+variable "cpu_scail_out_percent" {
+  description = "The percent of the cpu scail out. (e.g: 80)"
+  type        = number
+  default     = 70
+}
