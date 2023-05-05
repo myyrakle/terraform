@@ -75,6 +75,14 @@ resource "aws_ecs_task_definition" "task_definition" {
         }
       ]
       entrypoint = var.docker_entrypoint
+      logConfiguration = {
+        "LogDriver" : "awslogs",
+        "Options" : {
+          "awslogs-group" : aws_cloudwatch_log_group.log_group.arn,
+          "awslogs-region" : var.region,
+          "awslogs-stream-prefix" : local.resource_id
+        }
+      }
     },
   ])
 
