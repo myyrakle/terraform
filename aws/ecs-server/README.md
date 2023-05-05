@@ -38,7 +38,7 @@
 
 1. region: 리전 정보입니다. 서울이라면 ap-northeast-2 값을 넘겨줍니다.
 2. vpc_id: vpc id입니다. 2개 이상의 AZ 서브넷이 있어야 합니다.
-3. subnet_ids
+3. subnet_ids: 서브넷 목록의 배열입니다. vpc_id에 속한 서브넷이여야 하고, 2개 이상 지정해야 합니다.
 4. environment: 환경 정보입니다. server_name과 조합되어 고유의 리소스 이름을 형성합니다. prod, stage, dev 등의 값을 설정하면 됩니다.
 5. server_name: 서버명입니다. environment와 조합해서 고유의 리소스 이름을 형성합니다.
 6. github_user: github username or organization name입니다.
