@@ -87,8 +87,8 @@ variable "certificate_arn" {
 // docker container entrypoint
 variable "docker_entrypoint" {
   description = "The entrypoint of the docker image. (e.g: \"sh\", \"run.sh\")"
-  type        = string
-  default     = "sh run.sh"
+  type        = list(string)
+  default     = ["sh", "run.sh"]
 }
 
 // 헬스체크 api 경로

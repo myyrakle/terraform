@@ -64,14 +64,14 @@ resource "aws_ecs_task_definition" "task_definition" {
 
   container_definitions = jsonencode([
     {
-      name      = join("-", [var.server_name, var.environment])
-      image     = join(":", [aws_ecr_repository.ecr.repository_url, var.docker_release_tag])
+      name      = local.resource_id
+      image     = local.release_image
       cpu       = 0
       essential = true
       portMappings = [
         {
-          containerPort = var.portforward_container_port
-          hostPort      = var.portforward_host_port
+          containerPort : var.portforward_container_port
+          hostPort = var.portforward_host_port
         }
       ]
       entrypoint = var.docker_entrypoint
@@ -98,7 +98,7 @@ resource "aws_lb_target_group" "target_group" {
     port                = var.target_group_port
     healthy_threshold   = 5
     unhealthy_threshold = 2
-    timeout             = 30
+    timeout             = 20
   }
 
   tags = local.tags
