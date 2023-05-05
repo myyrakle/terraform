@@ -145,3 +145,15 @@ resource "aws_codepipeline" "codepipeline" {
 
   tags = local.tags
 }
+
+// Blue Green 배포에 사용할 대상 그룹
+resource "aws_lb_target_group" "blue_green_arget_group" {
+  name             = local.resource_id
+  port             = var.target_group_port
+  protocol_version = var.target_group_protocol_version
+  protocol         = var.target_group_protocol
+  vpc_id           = var.vpc_id
+  target_type      = "ip"
+
+  tags = local.tags
+}
