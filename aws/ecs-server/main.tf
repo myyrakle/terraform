@@ -78,7 +78,7 @@ resource "aws_ecs_task_definition" "task_definition" {
       logConfiguration = {
         "LogDriver" : "awslogs",
         "Options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.log_group.arn,
+          "awslogs-group" : aws_cloudwatch_log_group.log_group.name,
           "awslogs-region" : var.region,
           "awslogs-stream-prefix" : local.resource_id
         }
@@ -156,11 +156,13 @@ resource "aws_lb_listener" "https_listener" {
 
 // ECS 서비스
 resource "aws_ecs_service" "ecs_service" {
-  name            = local.resource_id
-  cluster         = aws_ecs_cluster.ecs_cluster.id
-  task_definition = aws_ecs_task_definition.task_definition.arn
-  desired_count   = 0 // TODO: 최초 구성 시점에서는 codebuild가 돌지 않아 실행 불가. 최초 code build가 돌때까지 wait하는 기능을 고려할 필요 있음
-  launch_type     = "FARGATE"
+  name                              = local.resource_id
+  cluster                           = aws_ecs_cluster.ecs_cluster.id
+  task_definition                   = aws_ecs_task_definition.task_definition.arn
+  health_check_grace_period_seconds = 60
+  desired_count                     = 0 // TODO: 최초 구성 시점에서는 codebuild가 돌지 않아 실행 불가. 최초 code build가 돌때까지 wait하는 기능을 고려할 필요 있음
+  launch_type                       = "FARGATE"
+
   network_configuration {
     subnets          = var.subnet_ids
     security_groups  = [aws_security_group.ecs_service_sg.id]
