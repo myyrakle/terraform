@@ -20,14 +20,15 @@ resource "aws_iam_role" "task_execution_role" {
 
   inline_policy = {
     name = "root"
-    statement = [
-      {
-        "Effect" : "Allow",
-        "Action" : "*",
-        "Resource" : "*"
-      }
-    ]
-
+    policy = jsonencode({
+      Statement = [
+        {
+          "Effect" : "Allow",
+          "Action" : "*",
+          "Resource" : "*"
+        }
+      ]
+    })
   }
 
   tags = local.tags
@@ -55,27 +56,29 @@ resource "aws_iam_role" "scalable_target_role" {
   path = "/"
 
   inline_policy {
-    name    = "root"
-    version = "2012-10-17"
-    statement = [
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          "application-autoscaling:*",
-          "cloudwatch:DescribeAlarms",
-          "cloudwatch:PutMetricAlarm",
-          "ecs:DescribeServices",
-          "ecs:UpdateService"
-        ],
-        "Resource" : "*"
-      }
-    ]
+    name = "root"
+    policy = jsonencode({
+      Version = "2012-10-17",
+      Statement = [
+        {
+          "Effect" : "Allow",
+          "Action" : [
+            "application-autoscaling:*",
+            "cloudwatch:DescribeAlarms",
+            "cloudwatch:PutMetricAlarm",
+            "ecs:DescribeServices",
+            "ecs:UpdateService"
+          ],
+          "Resource" : "*"
+        }
+      ]
+    })
+
+
   }
 
   tags = local.tags
 }
-
-
 
 // ECS Service에 사용할 role
 resource "aws_iam_role" "ecs_service_role" {
@@ -99,23 +102,25 @@ resource "aws_iam_role" "ecs_service_role" {
   path = "/"
 
   inline_policy {
-    name    = "ecs-service"
-    version = "2012-10-17"
-    statement = [
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
-          "elasticloadbalancing:DeregisterTargets",
-          "elasticloadbalancing:Describe*",
-          "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
-          "elasticloadbalancing:RegisterTargets",
-          "ec2:Describe*",
-          "ec2:AuthorizeSecurityGroupIngress"
-        ],
-        "Resource" : "*"
-      }
-    ]
+    name = "ecs-service"
+    policy = jsonencode({
+      Version = "2012-10-17",
+      Statement = [
+        {
+          "Effect" : "Allow",
+          "Action" : [
+            "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+            "elasticloadbalancing:DeregisterTargets",
+            "elasticloadbalancing:Describe*",
+            "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+            "elasticloadbalancing:RegisterTargets",
+            "ec2:Describe*",
+            "ec2:AuthorizeSecurityGroupIngress"
+          ],
+          "Resource" : "*"
+        }
+      ]
+    })
   }
 
   tags = local.tags
@@ -143,15 +148,17 @@ resource "aws_iam_role" "codebuild_role" {
   path = "/"
 
   inline_policy {
-    name    = "codebuild"
-    version = "2012-10-17"
-    statement = [
-      {
-        "Effect" : "Allow",
-        "Action" : "*",
-        "Resource" : "*"
-      }
-    ]
+    name = "codebuild"
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          "Effect" : "Allow",
+          "Action" : "*",
+          "Resource" : "*"
+        }
+      ]
+    })
   }
 
   tags = local.tags
@@ -204,37 +211,37 @@ resource "aws_iam_role" "codepipeline_role" {
   path = "/"
 
   inline_policy {
-    name    = "root"
-    version = "2012-10-17"
-    statement = [
-      {
-        "Resource" : {
-          "Fn::Sub" : "arn:aws:s3:::${ArtifactBucket}/*"
+    name = "root"
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          "Resource" : "${aws_s3_bucket.artifact_bucket.arn}/*",
+          "Effect" : "Allow",
+          "Action" : [
+            "s3:PutObject",
+            "s3:GetObject",
+            "s3:GetObjectVersion",
+            "s3:GetBucketVersioning"
+          ]
         },
-        "Effect" : "Allow",
-        "Action" : [
-          "s3:PutObject",
-          "s3:GetObject",
-          "s3:GetObjectVersion",
-          "s3:GetBucketVersioning"
-        ]
-      },
-      {
-        "Resource" : "*",
-        "Effect" : "Allow",
-        "Action" : [
-          "ecs:DescribeServices",
-          "ecs:DescribeTaskDefinition",
-          "ecs:DescribeTasks",
-          "ecs:ListTasks",
-          "ecs:RegisterTaskDefinition",
-          "ecs:UpdateService",
-          "codebuild:StartBuild",
-          "codebuild:BatchGetBuilds",
-          "iam:PassRole"
-        ]
-      }
-    ]
+        {
+          "Resource" : "*",
+          "Effect" : "Allow",
+          "Action" : [
+            "ecs:DescribeServices",
+            "ecs:DescribeTaskDefinition",
+            "ecs:DescribeTasks",
+            "ecs:ListTasks",
+            "ecs:RegisterTaskDefinition",
+            "ecs:UpdateService",
+            "codebuild:StartBuild",
+            "codebuild:BatchGetBuilds",
+            "iam:PassRole"
+          ]
+        }
+      ]
+    })
   }
 
   tags = local.tags
