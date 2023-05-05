@@ -160,8 +160,13 @@ resource "aws_ecs_service" "ecs_service" {
   cluster                           = aws_ecs_cluster.ecs_cluster.id
   task_definition                   = aws_ecs_task_definition.task_definition.arn
   health_check_grace_period_seconds = 60
-  desired_count                     = 0 // TODO: 최초 구성 시점에서는 codebuild가 돌지 않아 실행 불가. 최초 code build가 돌때까지 wait하는 기능을 고려할 필요 있음
+  desired_count                     = 0
   launch_type                       = "FARGATE"
+
+  lifecycle {
+    // 최초 생성시에만 0으로 고정. 이후에는 수정 불가
+    ignore_changes = [desired_count]
+  }
 
   network_configuration {
     subnets          = var.subnet_ids
