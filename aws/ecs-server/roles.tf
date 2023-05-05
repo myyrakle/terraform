@@ -157,3 +157,28 @@ resource "aws_iam_role" "codebuild_role" {
   tags = local.tags
 }
 
+// Code Deploy에 사용할 role
+resource "aws_iam_role" "codedeploy_role" {
+  name = join("-", [var.server_name, var.environment, "codedeploy-role"])
+
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Sid" : "",
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : ["codedeploy.amazonaws.com"]
+        },
+        "Action" : "sts:AssumeRole"
+      }
+    ]
+  })
+
+  path = "/"
+
+  tags = local.tags
+}
+
