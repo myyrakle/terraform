@@ -138,3 +138,10 @@ variable "target_group_protocol_version" {
   type        = string
   default     = "HTTP1"
 }
+
+// 오토스케일링 최대 개수입니다.
+variable "auto_scailing_max" {
+  description = "The max capacity of the auto scailing. (e.g: 10)"
+  type        = number
+  default     = 16
+}

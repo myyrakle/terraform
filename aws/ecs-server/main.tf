@@ -19,12 +19,14 @@ locals {
     Environment = var.environment
     Application = var.server_name
   }
+
+  resource_id = join("-", [var.server_name, var.environment])
 }
 
 // CloudWatch 로그 그룹
 // 서버 로그 기록에 사용합니다.
 resource "aws_cloudwatch_log_group" "log_group" {
-  name              = join("-", [var.server_name, var.environment])
+  name              = local.resource_id
   retention_in_days = var.log_retention_in_days
 
   tags = local.tags
@@ -33,7 +35,7 @@ resource "aws_cloudwatch_log_group" "log_group" {
 // ECR
 // 서버 프로지버닝에 사용할 docker image를 관리합니다.
 resource "aws_ecr_repository" "ecr" {
-  name                 = join("-", [var.server_name, var.environment])
+  name                 = local.resource_id
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -46,7 +48,7 @@ resource "aws_ecr_repository" "ecr" {
 // ECS 
 // 서버를 배포할 ECS 클러스터입니다. 
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = join("-", [var.server_name, var.environment])
+  name = local.resource_id
 
   setting {
     name  = "containerInsights"
@@ -58,7 +60,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
 // ECS 작업 정의
 resource "aws_ecs_task_definition" "task_definition" {
-  family = join("-", [var.server_name, var.environment])
+  family = local.resource_id
 
   requires_compatibilities = ["FARGATE"]
 
@@ -91,7 +93,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 
 // 로드밸런싱에 사용할 대상 그룹
 resource "aws_lb_target_group" "target_group" {
-  name             = join("-", [var.server_name, var.environment])
+  name             = local.resource_id
   port             = var.target_group_port
   protocol_version = var.target_group_protocol_version
   protocol         = var.target_group_protocol
@@ -111,5 +113,12 @@ resource "aws_lb_target_group" "target_group" {
   tags = local.tags
 }
 
-
-
+// 오토스케일링 구성
+resource "aws_appautoscaling_target" "auto_scailing" {
+  max_capacity       = var.auto_scailing_max
+  min_capacity       = 1
+  resource_id        = join("/", ["service", local.resource_id, local.resource_id])
+  role_arn           = scalable_target_role.arn
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
