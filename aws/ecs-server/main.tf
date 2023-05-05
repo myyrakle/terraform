@@ -91,13 +91,14 @@ resource "aws_ecs_task_definition" "task_definition" {
 
 
 // 로드밸런싱에 사용할 대상 그룹
-resource "aws_lb_target_group" "target_group" {
+resource "aws_lb_target_group" "target_group_blue" {
   name             = local.resource_id
   port             = var.target_group_port
   protocol_version = var.target_group_protocol_version
   protocol         = var.target_group_protocol
   vpc_id           = var.vpc_id
   target_type      = "ip"
+
   health_check {
     enabled             = true
     path                = var.healthcheck_uri
@@ -110,6 +111,29 @@ resource "aws_lb_target_group" "target_group" {
 
   tags = local.tags
 }
+
+// Blue Green 배포에 사용할 대상 그룹
+resource "aws_lb_target_group" "target_group_green" {
+  name             = local.resource_id
+  port             = var.target_group_port
+  protocol_version = var.target_group_protocol_version
+  protocol         = var.target_group_protocol
+  vpc_id           = var.vpc_id
+  target_type      = "ip"
+
+  health_check {
+    enabled             = true
+    path                = var.healthcheck_uri
+    interval            = var.healthcheck_interval
+    protocol            = var.target_group_protocol
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    timeout             = 20
+  }
+
+  tags = local.tags
+}
+
 
 // 로드밸런서입니다.
 resource "aws_lb" "loadbalancer" {
@@ -136,7 +160,7 @@ resource "aws_lb_listener" "http_listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.target_group.arn
+    target_group_arn = aws_lb_target_group.target_group_blue.arn
   }
 }
 
@@ -150,7 +174,7 @@ resource "aws_lb_listener" "https_listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.target_group.arn
+    target_group_arn = aws_lb_target_group.target_group_blue.arn
   }
 }
 
@@ -175,7 +199,7 @@ resource "aws_ecs_service" "ecs_service" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.target_group.arn
+    target_group_arn = aws_lb_target_group.target_group_blue.arn
     container_name   = local.resource_id
     container_port   = var.portforward_container_port
   }
