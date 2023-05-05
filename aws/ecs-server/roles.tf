@@ -14,23 +14,63 @@ resource "aws_iam_role" "task_execution_role" {
         "Action" : ["sts:AssumeRole"]
       }
     ]
-    Path = "/"
-    Policies = [
+  })
+
+  path = "/"
+
+  inline_policy = {
+    name = "root"
+    statement = [
       {
-        "PolicyName" : "root",
-        "PolicyDocument" : {
-          "Version" : "2012-10-17",
-          "Statement" : [
-            {
-              "Effect" : "Allow",
-              "Action" : "*",
-              "Resource" : "*"
-            }
-          ]
-        }
+        "Effect" : "Allow",
+        "Action" : "*",
+        "Resource" : "*"
+      }
+    ]
+
+  }
+
+  tags = local.tags
+}
+
+// 오토스케일링에 사용할 role
+resource "aws_iam_role" "scalable_target_role" {
+  name = join("-", [var.server_name, var.environment, "scalable-target-role"])
+
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : ["application-autoscaling.amazonaws.com"]
+        },
+        "Action" : ["sts:AssumeRole"]
       }
     ]
   })
+
+  path = "/"
+
+  inline_policy {
+    name    = "root"
+    version = "2012-10-17"
+    statement = [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "application-autoscaling:*",
+          "cloudwatch:DescribeAlarms",
+          "cloudwatch:PutMetricAlarm",
+          "ecs:DescribeServices",
+          "ecs:UpdateService"
+        ],
+        "Resource" : "*"
+      }
+    ]
+  }
 
   tags = local.tags
 }
