@@ -17,21 +17,10 @@ provider "aws" {
 locals {
 }
 
-
-resource "aws_cloudwatch_log_group" "log_group" {
-  name              = join("-", [var.server_name], "log-group")
-  retention_in_days = var.log_retention_in_days
-
-  tags = {
-    Environment = var.environment
-    Application = var.server_name
-  }
-}
-
 // CloudWatch 로그 그룹
 // 서버 로그 기록에 사용합니다.
 resource "aws_cloudwatch_log_group" "log_group" {
-  name              = join("-", [var.server_name, var.var.environment])
+  name              = join("-", [var.server_name, var.environment])
   retention_in_days = var.log_retention_in_days
 
   tags = {
@@ -47,6 +36,7 @@ resource "aws_ecr_repository" "ecr" {
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
+    scan_on_push = true
   }
 
   tags = {
