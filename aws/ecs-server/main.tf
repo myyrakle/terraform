@@ -15,6 +15,10 @@ provider "aws" {
 }
 
 locals {
+  tags = {
+    Environment = var.environment
+    Application = var.server_name
+  }
 }
 
 // CloudWatch 로그 그룹
@@ -23,10 +27,7 @@ resource "aws_cloudwatch_log_group" "log_group" {
   name              = join("-", [var.server_name, var.environment])
   retention_in_days = var.log_retention_in_days
 
-  tags = {
-    Environment = var.environment
-    Application = var.server_name
-  }
+  tags = local.tags
 }
 
 // ECR
@@ -39,10 +40,7 @@ resource "aws_ecr_repository" "ecr" {
     scan_on_push = true
   }
 
-  tags = {
-    Environment = var.environment
-    Application = var.server_name
-  }
+  tags = local.tags
 }
 
 // ECS 
@@ -55,8 +53,36 @@ resource "aws_ecs_cluster" "ecs_cluster" {
     value = "enabled"
   }
 
-  tags = {
-    Environment = var.environment
-    Application = var.server_name
-  }
+  tags = local.tags
+}
+
+resource "aws_ecs_task_definition" "task_definition" {
+  family = join("-", [var.server_name, var.environment])
+
+  requires_compatibilities = ["FARGATE"]
+
+  network_mode = "awsvpc"
+
+  execution_role_arn = task_execution_role.arn
+
+  memory = var.container_memory
+  cpu    = var.container_cpu
+
+  container_definitions = jsonencode([
+    {
+      name      = join("-", [var.server_name, var.environment])
+      image     = join(":", [aws_ecr_repository.ecr.repository_url, var.docker_release_tag])
+      cpu       = 0
+      essential = true
+      portMappings = [
+        {
+          containerPort = var.portforward_container_port
+          hostPort      = var.portforward_host_port
+        }
+      ]
+      entrypoint = var.entrypoint
+    },
+  ])
+
+  tags = local.tags
 }

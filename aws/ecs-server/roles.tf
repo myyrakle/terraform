@@ -32,8 +32,6 @@ resource "aws_iam_role" "task_execution_role" {
     ]
   })
 
-  tags = {
-    Environment = var.environment
-    Application = var.server_name
-  }
+  tags = local.tags
 }
+
