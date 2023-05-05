@@ -169,13 +169,6 @@ variable "memory_scail_out_percent" {
   default     = 70
 }
 
-// 초기 생성시 서비스 container의 개수입니다.
-variable "desired_count" {
-  description = "The desired count of the service. (e.g: 2)"
-  type        = number
-  default     = 1
-}
-
 // code build 컴퓨팅 타입입니다.
 // 다음 문서를 참고합니다. https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html
 variable "codebuild_compute_type" {
