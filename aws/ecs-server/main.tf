@@ -113,3 +113,21 @@ resource "aws_lb_target_group" "target_group" {
   tags = local.tags
 }
 
+// 로드밸런서입니다.
+# resource "aws_lb" "loadbalancer" {
+#   name               = local.resource_id
+#   internal           = false
+#   load_balancer_type = "application"
+#   security_groups    = [aws_security_group.lb_sg.id]
+#   subnets            = [for subnet in aws_subnet.public : subnet.id]
+
+#   enable_deletion_protection = true
+
+#   access_logs {
+#     bucket  = aws_s3_bucket.lb_logs.id
+#     prefix  = "test-lb"
+#     enabled = true
+#   }
+
+#   tags = local.tags
+# }
