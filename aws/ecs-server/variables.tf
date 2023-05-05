@@ -73,10 +73,11 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
-# variable "certificate_arn" {
-#   description = "The ARN of the certificate to use for SSL. (e.g: arn:aws:acm:ap-northeast-2:210706881319:certificate/6a0b3a8b-bcb1-491d-a814-078739105983)"
-#   type        = string
-# }
+// ACM SSL 인증서 ARN
+variable "certificate_arn" {
+  description = "The ARN of the certificate to use for SSL. (e.g: arn:aws:acm:ap-northeast-2:210706881319:certificate/6a0b3a8b-bcb1-491d-a814-078739105983)"
+  type        = string
+}
 
 // docker container entrypoint
 variable "docker_entrypoint" {
