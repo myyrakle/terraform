@@ -52,20 +52,25 @@ variable "docker_release_tag" {
   default     = "latest"
 }
 
-# variable "github_repository" {
-#   description = "The name of the github repository."
-#   type        = string
-# }
+variable "github_user" {
+  description = "The username of the github repository."
+  type        = string
+}
 
-# variable "github_branch" {
-#   description = "The name of the github branch."
-#   type        = string
-# }
+variable "github_repository" {
+  description = "The name of the github repository."
+  type        = string
+}
 
-# variable "github_oauth_token" {
-#   description = "The oauth token for github. (e.g: ghp_KZymx3mI6f3x*****5GN3W5RItAB1fzlyi)"
-#   type        = string
-# }
+variable "github_branch" {
+  description = "The name of the github branch."
+  type        = string
+}
+
+variable "github_oauth_token" {
+  description = "The oauth token for github. (e.g: ghp_KZymx3mI6f3x*****5GN3W5RItAB1fzlyi)"
+  type        = string
+}
 
 // 서브넷 목록
 variable "subnet_ids" {

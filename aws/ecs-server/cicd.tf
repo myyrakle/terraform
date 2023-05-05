@@ -76,3 +76,74 @@ resource "aws_codedeploy_app" "deploy" {
 
   tags = local.tags
 }
+
+// code pipeline
+resource "aws_codepipeline" "codepipeline" {
+  name     = local.resource_id
+  role_arn = aws_iam_role.codepipeline_role.arn
+
+  artifact_store {
+    location = aws_s3_bucket.artifact_bucket
+    type     = "S3"
+  }
+
+  stage {
+    name = "Source"
+
+    action {
+      configuration = {
+        Owner      = var.github_user
+        Repo       = var.github_repository
+        Branch     = var.github_branch
+        OAuthToken = var.github_oauth_token
+      }
+
+      name     = "Source"
+      category = "Source"
+      owner    = "ThirdParty"
+      provider = "GitHub"
+      version  = "1"
+
+      output_artifacts = ["Source"]
+    }
+  }
+
+  stage {
+    name = "Build"
+
+    action {
+      name             = "Build"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["Source"]
+      output_artifacts = ["Build"]
+      version          = "1"
+
+      configuration = {
+        ProjectName = aws_codebuild_project.codebuild.name
+      }
+    }
+  }
+
+  stage {
+    name = "Deploy"
+
+    action {
+      name            = "Deploy"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "ECS"
+      input_artifacts = ["Build"]
+      version         = "1"
+
+      configuration = {
+        ClusterName = aws_ecs_cluster.ecs_cluster.name
+        ServiceName = aws_ecs_service.ecs_service.name
+        FileName    = "images.json"
+      }
+    }
+  }
+
+  tags = local.tags
+}
