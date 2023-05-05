@@ -160,3 +160,10 @@ variable "memory_scail_out_percent" {
   type        = number
   default     = 70
 }
+
+// 초기 생성시 서비스 container의 개수입니다.
+variable "desired_count" {
+  description = "The desired count of the service. (e.g: 2)"
+  type        = number
+  default     = 1
+}
