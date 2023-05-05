@@ -14,15 +14,6 @@ provider "aws" {
   region = var.region
 }
 
-locals {
-  tags = {
-    Environment = var.environment
-    Application = var.server_name
-  }
-
-  resource_id = join("-", [var.server_name, var.environment])
-}
-
 // CloudWatch 로그 그룹
 // 서버 로그 기록에 사용합니다.
 resource "aws_cloudwatch_log_group" "log_group" {

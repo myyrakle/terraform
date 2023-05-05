@@ -99,10 +99,10 @@ variable "healthcheck_interval" {
   default     = 30
 }
 
-# variable "buildspec_path" {
-#   description = "BuildSpec file path (e.g: \"/prod/buildspec.yml\")"
-#   type        = string
-# }
+variable "buildspec_path" {
+  description = "BuildSpec file path (e.g: \"/prod/buildspec.yml\")"
+  type        = string
+}
 
 // 컨테이너 메모리입니다. 메가바이트 단위입니다.
 variable "container_memory" {
@@ -166,4 +166,12 @@ variable "desired_count" {
   description = "The desired count of the service. (e.g: 2)"
   type        = number
   default     = 1
+}
+
+// code build 컴퓨팅 타입입니다.
+// 다음 문서를 참고합니다. https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html
+variable "codebuild_compute_type" {
+  description = "The compute type of the codebuild. (e.g: BUILD_GENERAL1_SMALL)"
+  type        = string
+  default     = "BUILD_GENERAL1_SMALL"
 }
