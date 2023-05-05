@@ -56,6 +56,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   tags = local.tags
 }
 
+// ECS 작업 정의
 resource "aws_ecs_task_definition" "task_definition" {
   family = join("-", [var.server_name, var.environment])
 
@@ -86,3 +87,27 @@ resource "aws_ecs_task_definition" "task_definition" {
 
   tags = local.tags
 }
+
+
+// 로드밸런싱에 사용할 대상 그룹
+resource "aws_lb_target_group" "target_group" {
+  name             = join("-", [var.server_name, var.environment])
+  port             = var.target_group_port
+  protocol_version = var.target_group_protocol_version
+  protocol         = var.target_group_protocol
+  vpc_id           = var.vpc_id
+  target_type      = "ip"
+  health_check {
+    enabled             = true
+    path                = var.healthcheck_uri
+    interval            = var.healthcheck_interval
+    protocol            = var.target_group_protocol
+    port                = var.target_group_port
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    timeout             = 30
+  }
+
+  tags = local.tags
+}
+

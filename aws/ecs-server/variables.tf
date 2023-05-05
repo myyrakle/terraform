@@ -4,6 +4,11 @@ variable "region" {
   type        = string
 }
 
+// 서버 구성에 사용할 VPC입니다.
+variable "vpc_id" {
+  description = "VPC ID. That VPC must have at least 2 subnets for availability. (e.g: vpc-053f9aaabecf3b6bc)"
+  type        = string
+}
 
 // tag 및 리소스 이름 구성에 사용됨
 variable "environment" {
@@ -62,10 +67,7 @@ variable "docker_release_tag" {
 #   type        = string
 # }
 
-# variable "vpc_id" {
-#   description = "VPC ID. That VPC must have at least 2 subnets for availability. (e.g: vpc-053f9aaabecf3b6bc)"
-#   type        = string
-# }
+
 
 # variable "subnet_ids" {
 #   description = "Subnet IDs. (e.g: [subnet-0a9b8c7d6e5f4a3b2, subnet-0a9b8c7d6e5f4a3b2])"
@@ -76,29 +78,63 @@ variable "docker_release_tag" {
 #   type        = string
 # }
 
+// docker container entrypoint
 variable "docker_entrypoint" {
   description = "The entrypoint of the docker image. (e.g: \"sh\", \"run.sh\")"
   type        = string
 }
 
-# variable "healthcheck_uri" {
-#   description = "The uri of the healthcheck. (e.g: \"/health\")"
-#   type        = string
-# }
+// 헬스체크 api 경로
+variable "healthcheck_uri" {
+  description = "The uri of the healthcheck. (e.g: \"/health\")"
+  type        = string
+  default     = "/"
+}
+
+// 헬스체크 시간 간격 (초 단위)
+variable "healthcheck_interval" {
+  description = "The interval of the healthcheck. (e.g: 30)"
+  type        = number
+  default     = 30
+}
 
 # variable "buildspec_path" {
 #   description = "BuildSpec file path (e.g: \"/prod/buildspec.yml\")"
 #   type        = string
 # }
 
+// 컨테이너 메모리입니다. 메가바이트 단위입니다.
 variable "container_memory" {
-  description = "The memory of the container. (e.g: 2048)"
+  description = "The memory of the container. It is in megabytes. (e.g: 2048)"
   type        = number
   default     = 2048
 }
 
+// 컨테이너에 할당할 vcpu 개수입니다. 1024가 1vcpu입니다.
 variable "container_cpu" {
-  description = "The cpu of the container. (e.g: 1024)"
+  description = "The cpu of the container. 1024 is one vcpu. (e.g: 1024)"
   type        = number
   default     = 1024
+}
+
+// target group 포트입니다. 
+variable "target_group_port" {
+  description = "The port of the target group. (e.g: 80)"
+  type        = number
+  default     = 80
+}
+
+// GENEVE, HTTP, HTTPS, TCP, TCP_UDP, TLS이 사용 가능합니다.
+variable "target_group_protocol" {
+  description = "value of target group port protocol. (e.g: HTTP, HTTPS, TCP)"
+  type        = string
+  default     = "HTTP"
+}
+
+// target group 프로토콜 버전입니다. 
+// GRPC, HTTP2, HTTP1이 선택 가능합니다.
+variable "target_group_protocol_version" {
+  description = "value of target group port protocol version. (e.g: GRPC, HTTP2, HTTP1)"
+  type        = string
+  default     = "HTTP1"
 }
