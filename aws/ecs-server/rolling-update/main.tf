@@ -138,6 +138,8 @@ resource "aws_lb_listener" "http_listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.target_group.arn
   }
+
+  tags = local.tags
 }
 
 // HTTPS 리스너
@@ -152,6 +154,8 @@ resource "aws_lb_listener" "https_listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.target_group.arn
   }
+
+  tags = local.tags
 }
 
 // ECS 서비스
