@@ -85,10 +85,19 @@ resource "aws_codedeploy_app" "deploy" {
   tags = local.tags
 }
 
+resource "aws_codedeploy_deployment_config" "config_deploy" {
+  deployment_config_name = local.resource_id
+  compute_platform       = "ECS"
+
+  traffic_routing_config {
+    type = "AllAtOnce"
+  }
+}
+
 // blue-green 배포를 위한 code deploy group
 resource "aws_codedeploy_deployment_group" "deployment_group" {
   app_name               = aws_codedeploy_app.deploy.name
-  deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
+  deployment_config_name = aws_codedeploy_deployment_config.config_deploy.deployment_config_name
   deployment_group_name  = local.resource_id
   service_role_arn       = aws_iam_role.codedeploy_role.arn
 
@@ -104,6 +113,7 @@ resource "aws_codedeploy_deployment_group" "deployment_group" {
       wait_time_in_minutes = 0
     }
 
+    // green 배포 성공시 blue 인스턴스를 5분 후에 삭제합니다.
     terminate_blue_instances_on_deployment_success {
       action                           = "TERMINATE"
       termination_wait_time_in_minutes = 5

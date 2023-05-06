@@ -112,11 +112,6 @@ resource "aws_lb_target_group" "target_group_green" {
   tags = local.tags
 }
 
-// 로드밸런서 로그 버킷
-resource "aws_s3_bucket" "log_bucket" {
-  tags = local.tags
-}
-
 // 로드밸런서입니다.
 resource "aws_lb" "loadbalancer" {
   name               = local.resource_id
@@ -129,12 +124,6 @@ resource "aws_lb" "loadbalancer" {
     content {
       subnet_id = subnet_mapping.value
     }
-  }
-
-  access_logs {
-    bucket  = aws_s3_bucket.log_bucket.bucket
-    prefix  = "alb_access_logs"
-    enabled = true
   }
 
   tags = local.tags
