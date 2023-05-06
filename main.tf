@@ -14,7 +14,7 @@ provider "aws" {
   region = var.region
 }
 
-resource "ec2" "server" {
+resource "aws_instance" "server" {
   tags = {
     Name = var.server_name
   }
