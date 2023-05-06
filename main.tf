@@ -19,6 +19,6 @@ resource "aws_instance" "server" {
     Name = var.server_name
   }
 
-  ami           = "ami-0c55b159cbfafe1f0"
+  ami           = "ami-0e9bfdb247cc8de84"
   instance_type = "t2.micro"
 }
