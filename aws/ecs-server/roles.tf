@@ -244,6 +244,7 @@ resource "aws_iam_role" "codepipeline_role" {
             "ecs:UpdateService",
             "codebuild:StartBuild",
             "codebuild:BatchGetBuilds",
+            "codedeploy:GetApplication",
             "iam:PassRole"
           ]
         }

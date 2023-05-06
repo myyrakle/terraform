@@ -62,29 +62,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   memory = var.container_memory
   cpu    = var.container_cpu
 
-  container_definitions = jsonencode([
-    {
-      name      = local.resource_id
-      image     = local.release_image
-      cpu       = 0
-      essential = true
-      portMappings = [
-        {
-          containerPort : var.portforward_container_port
-          hostPort = var.portforward_host_port
-        }
-      ]
-      entrypoint = var.docker_entrypoint
-      logConfiguration = {
-        "LogDriver" : "awslogs",
-        "Options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.log_group.name,
-          "awslogs-region" : var.region,
-          "awslogs-stream-prefix" : local.resource_id
-        }
-      }
-    },
-  ])
+  container_definitions = jsonencode(local.container_definitions)
 
   tags = local.tags
 }
@@ -134,6 +112,10 @@ resource "aws_lb_target_group" "target_group_green" {
   tags = local.tags
 }
 
+// 로드밸런서 로그 버킷
+resource "aws_s3_bucket" "log_bucket" {
+  tags = local.tags
+}
 
 // 로드밸런서입니다.
 resource "aws_lb" "loadbalancer" {
@@ -149,6 +131,12 @@ resource "aws_lb" "loadbalancer" {
     }
   }
 
+  access_logs {
+    bucket  = aws_s3_bucket.log_bucket.bucket
+    prefix  = "alb_access_logs"
+    enabled = true
+  }
+
   tags = local.tags
 }
 
@@ -162,7 +150,28 @@ resource "aws_lb_listener" "http_listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.target_group_blue.arn
   }
+
+  lifecycle {
+    ignore_changes = [default_action]
+  }
 }
+
+// HTTP 리스너
+resource "aws_lb_listener" "http_test_listener" {
+  load_balancer_arn = aws_lb.loadbalancer.arn
+  port              = "8080"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.target_group_green.arn
+  }
+
+  lifecycle {
+    ignore_changes = [default_action]
+  }
+}
+
 
 // HTTPS 리스너
 resource "aws_lb_listener" "https_listener" {
@@ -189,7 +198,7 @@ resource "aws_ecs_service" "ecs_service" {
 
   lifecycle {
     // 최초 생성시에만 0으로 고정. 이후에는 수정 불가
-    ignore_changes = [desired_count]
+    ignore_changes = [desired_count, load_balancer]
   }
 
   network_configuration {
