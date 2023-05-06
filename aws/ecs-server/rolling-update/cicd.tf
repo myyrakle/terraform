@@ -1,10 +1,14 @@
 // 아티팩트 버킷
 resource "aws_s3_bucket" "artifact_bucket" {
+  bucket = "${local.resource_id}-artifact-bucket"
+
   tags = local.tags
 }
 
 // 빌드 캐시용 버킷
 resource "aws_s3_bucket" "cache_bucket" {
+  bucket = "${local.resource_id}-cache-bucket"
+
   tags = local.tags
 }
 
