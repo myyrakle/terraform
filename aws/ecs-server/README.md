@@ -3,6 +3,7 @@
 ## 개요
 
 - ECS Fargate룰 기반으로 구성된 서버 및 CI/CD 설정입니다.
+- rolling update와 blue green 배포 2가지가 제공됩니다.
 
 ## 리소스 구성
 
