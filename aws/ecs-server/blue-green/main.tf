@@ -143,6 +143,8 @@ resource "aws_lb_listener" "http_listener" {
   lifecycle {
     ignore_changes = [default_action]
   }
+
+  tags = local.tags
 }
 
 // HTTP 리스너
@@ -159,6 +161,8 @@ resource "aws_lb_listener" "http_test_listener" {
   lifecycle {
     ignore_changes = [default_action]
   }
+
+  tags = local.tags
 }
 
 
@@ -174,6 +178,8 @@ resource "aws_lb_listener" "https_listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.target_group_blue.arn
   }
+
+  tags = local.tags
 }
 
 // ECS 서비스

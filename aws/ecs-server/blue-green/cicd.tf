@@ -1,13 +1,13 @@
 // 아티팩트 버킷
 resource "aws_s3_bucket" "artifact_bucket" {
-  // bucket = "${local.resource_id}-artifact-bucket"
+  bucket = "${local.resource_id}-artifact-bucket"
 
   tags = local.tags
 }
 
 // 빌드 캐시용 버킷
 resource "aws_s3_bucket" "cache_bucket" {
-  // bucket = "${local.resource_id}-cache-bucket"
+  bucket = "${local.resource_id}-cache-bucket"
 
   tags = local.tags
 }
@@ -137,13 +137,12 @@ resource "aws_codedeploy_deployment_group" "deployment_group" {
   load_balancer_info {
     target_group_pair_info {
       prod_traffic_route {
-        listener_arns = [aws_lb_listener.http_listener.arn]
+        listener_arns = [aws_lb_listener.https_listener.arn]
       }
 
       test_traffic_route {
         listener_arns = [aws_lb_listener.http_test_listener.arn]
       }
-
 
       target_group {
         name = aws_lb_target_group.target_group_blue.name
