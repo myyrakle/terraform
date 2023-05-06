@@ -179,6 +179,10 @@ resource "aws_lb_listener" "https_listener" {
     target_group_arn = aws_lb_target_group.target_group_blue.arn
   }
 
+  lifecycle {
+    ignore_changes = [default_action]
+  }
+
   tags = local.tags
 }
 
