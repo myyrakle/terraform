@@ -3,3 +3,4 @@ tfvars/
 *.exe
 *.backup
 *.tfstate
+.terraform.tfstate.lock.info
