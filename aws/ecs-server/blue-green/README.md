@@ -11,4 +11,3 @@
 ## 단점
 
 - 실제 배포 완료까지 시간이 조금 더 걸리는 편입니다.
-- 현재로서는 blue-green switching에 하나의 리스너만 적용이 가능합니다. 때문에, HTTP와 HTTPS를 동시에 노출하고 blue-green switching을 하는건 구현되어있지 않습니다.
