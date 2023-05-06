@@ -129,25 +129,26 @@ resource "aws_lb" "loadbalancer" {
   tags = local.tags
 }
 
-// HTTP 리스너
-resource "aws_lb_listener" "http_listener" {
-  load_balancer_arn = aws_lb.loadbalancer.arn
-  port              = "80"
-  protocol          = "HTTP"
+# // HTTP 리스너
+# resource "aws_lb_listener" "http_listener" {
+#   load_balancer_arn = aws_lb.loadbalancer.arn
+#   port              = "80"
+#   protocol          = "HTTP"
 
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.target_group_blue.arn
-  }
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.target_group_blue.arn
+#   }
 
-  lifecycle {
-    ignore_changes = [default_action]
-  }
+#   lifecycle {
+#     ignore_changes = [default_action]
+#   }
 
-  tags = local.tags
-}
+#   tags = local.tags
+# }
 
-// HTTP 리스너
+// HTTP 리스너 
+// 트래픽 테스트
 resource "aws_lb_listener" "http_test_listener" {
   load_balancer_arn = aws_lb.loadbalancer.arn
   port              = "8080"
