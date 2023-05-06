@@ -2,3 +2,4 @@
 tfvars/
 *.exe
 *.backup
+*.tfstate
