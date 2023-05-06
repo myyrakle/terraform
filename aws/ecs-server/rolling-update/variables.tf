@@ -115,15 +115,15 @@ variable "buildspec_path" {
 // 컨테이너 메모리입니다. 메가바이트 단위입니다.
 variable "container_memory" {
   description = "The memory of the container. It is in megabytes. (e.g: 2048)"
-  type        = number
-  default     = 2048
+  type        = string
+  default     = "2048"
 }
 
 // 컨테이너에 할당할 vcpu 개수입니다. 1024가 1vcpu입니다.
 variable "container_cpu" {
   description = "The cpu of the container. 1024 is one vcpu. (e.g: 1024)"
-  type        = number
-  default     = 1024
+  type        = string
+  default     = "1024"
 }
 
 // target group 포트입니다. 
