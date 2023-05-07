@@ -7,7 +7,7 @@ resource "aws_iam_role" "lambda_role" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Service" : ["ecs-tasks.amazonaws.com"]
+          "Service" : ["lambda.amazonaws.com"]
         },
         "Action" : [
           "sts:AssumeRole"
