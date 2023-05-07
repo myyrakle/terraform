@@ -1,5 +1,6 @@
 .terraform
 tfvars/
+*.tfvars
 *.exe
 *.backup
 *.tfstate

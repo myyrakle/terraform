@@ -16,7 +16,6 @@ variable "environment" {
   type        = string
 }
 
-
 // 서버명 (server_name-environment 형태로 구성됩니다.)
 variable "server_name" {
   description = "The name of the server machine you want to create."
