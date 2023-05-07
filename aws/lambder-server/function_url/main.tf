@@ -15,16 +15,11 @@ provider "aws" {
 }
 
 resource "aws_lambda_function" "lambda" {
-  # If the file is not in the current working directory you will need to include a
-  # path.module in the filename.
-  filename      = "lambda_function_payload.zip"
+  description   = "A lambda function for ${local.resource_id}}"
   function_name = local.resource_id
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.test"
-
-  source_code_hash = data.archive_file.lambda.output_base64sha256
-
-  runtime = "nodejs16.x"
+  layers        = var.lambda_layers
+  runtime       = var.lambda_runtime
 
   environment {
     variables = {}
