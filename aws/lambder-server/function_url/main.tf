@@ -36,10 +36,10 @@ resource "aws_lambda_function_url" "release_url" {
 
   cors {
     allow_credentials = true
-    allow_origins     = ["*"]
+    allow_origins     = var.cors_allow_origins
     allow_methods     = ["*"]
-    allow_headers     = ["date", "keep-alive"]
-    expose_headers    = ["keep-alive", "date"]
+    allow_headers     = var.cors_allow_headers
+    expose_headers    = var.cors_expose_headers
     max_age           = 86400
   }
 }
