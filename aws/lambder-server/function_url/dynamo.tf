@@ -12,6 +12,11 @@ resource "aws_dynamodb_table" "user-table" {
     type = "S"
   }
 
+  attribute {
+    name = "email"
+    type = "S"
+  }
+
   // 글로벌 보조 인덱스
   global_secondary_index {
     name     = "email-index"

@@ -20,6 +20,8 @@ resource "aws_lambda_function" "lambda" {
   role          = aws_iam_role.lambda_role.arn
   layers        = var.lambda_layers
   runtime       = var.lambda_runtime
+  handler       = "hello.handler"
+  filename      = "codes/axum.zip"
 
   environment {
     variables = {
