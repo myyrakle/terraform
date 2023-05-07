@@ -22,6 +22,24 @@ resource "aws_lambda_function" "lambda" {
   runtime       = var.lambda_runtime
 
   environment {
-    variables = {}
+    variables = {
+      ServerName  = var.server_name
+      ENVIRONMENT = var.environment
+    }
+  }
+}
+
+// Function Url
+resource "aws_lambda_function_url" "release_url" {
+  function_name      = aws_lambda_function.lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["*"]
+    allow_headers     = ["date", "keep-alive"]
+    expose_headers    = ["keep-alive", "date"]
+    max_age           = 86400
   }
 }

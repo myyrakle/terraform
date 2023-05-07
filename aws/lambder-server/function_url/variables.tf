@@ -32,3 +32,4 @@ variable "lambda_layers" {
   type        = list(string)
   default     = []
 }
+
