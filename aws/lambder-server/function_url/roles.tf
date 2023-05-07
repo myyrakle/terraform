@@ -37,7 +37,10 @@ resource "aws_iam_role" "lambda_role" {
             "dynamodb:Update*",
             "dynamodb:PutItem"
           ],
-          "Resource" : "arn:aws:dynamodb:*:*:table/${local.resource_id}*"
+          "Resource" : [
+            // 테이블을 추가할 때마다 여기에도 리소스를 추가해줍니다.
+            "arn:aws:dynamodb:*:*:table/${local.resource_id}_user"
+          ]
         }
       ]
     })
