@@ -101,6 +101,8 @@ resource "aws_batch_job_definition" "task_definition" {
         value = "Value"
       }
     ]
+
+    executionRoleArn = aws_iam_role.task_execution_role.arn
   })
 
   tags = local.tags

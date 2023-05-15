@@ -147,6 +147,22 @@ resource "aws_iam_role" "aws_batch_service_role" {
       }
     ]
   })
+
+  inline_policy {
+    name = "root"
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          "Resource" : "*",
+          "Effect" : "Allow",
+          "Action" : [
+            "logs:DescribeLogGroups",
+          ]
+        }
+      ]
+    })
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "codestar_attach" {
