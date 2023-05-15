@@ -167,3 +167,53 @@ resource "aws_iam_role" "aws_batch_service_role" {
   }
 }
 
+resource "aws_iam_role_policy_attachment" "batch_attach" {
+  role       = aws_iam_role.aws_batch_service_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
+}
+
+
+// event에 사용할 role
+resource "aws_iam_role" "event_role" {
+  name = join("-", [var.system_name, var.environment, "event-role"])
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "events.amazonaws.com"
+        },
+        "Action" : ["sts:AssumeRole"]
+      },
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "scheduler.amazonaws.com"
+        },
+        "Action" : "sts:AssumeRole"
+      }
+    ]
+  })
+
+  path = "/"
+
+  inline_policy {
+    name = "root"
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          "Resource" : "*",
+          "Effect" : "Allow",
+          "Action" : [
+            "batch:SubmitJob"
+          ]
+        }
+      ]
+    })
+  }
+
+  tags = local.tags
+}

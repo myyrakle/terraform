@@ -31,6 +31,8 @@ resource "aws_batch_compute_environment" "compute_env" {
 
   service_role = aws_iam_role.aws_batch_service_role.arn
   type         = "MANAGED"
+
+  depends_on = [aws_iam_role_policy_attachment.batch_attach]
 }
 
 // Batch 작업 큐
@@ -70,40 +72,11 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   tags = local.tags
 }
 
-// Batch 작업 정의
-resource "aws_batch_job_definition" "task_definition" {
-  name = "test"
-  type = "container"
+module "processors" {
+  source = "./processors"
 
-  platform_capabilities = [
-    "FARGATE",
-  ]
-
-  container_properties = jsonencode({
-    command = ["ls", "-la"],
-    image   = join(":", [aws_ecr_repository.ecr.repository_url, "latest"])
-
-    resourceRequirements = [
-      {
-        type  = "VCPU"
-        value = "0.25"
-      },
-      {
-        type  = "MEMORY"
-        value = "512"
-      }
-    ]
-
-
-    environment = [
-      {
-        name  = "Key"
-        value = "Value"
-      }
-    ]
-
-    executionRoleArn = aws_iam_role.task_execution_role.arn
-  })
-
-  tags = local.tags
+  task_execution_role = aws_iam_role.task_execution_role.arn
+  ecr_url             = aws_ecr_repository.ecr.repository_url
+  job_queue_arn       = aws_batch_job_queue.job_queue.arn
+  event_role_arn      = aws_iam_role.event_role.arn
 }
