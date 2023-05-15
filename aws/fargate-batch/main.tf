@@ -15,8 +15,8 @@ provider "aws" {
 }
 
 // Batch 컴퓨팅 환경
-resource "aws_batch_compute_environment" "sample" {
-  compute_environment_name = "sample"
+resource "aws_batch_compute_environment" "compute_env" {
+  compute_environment_name = local.resource_id
 
   compute_resources {
     max_vcpus = var.max_vcpu
@@ -32,6 +32,17 @@ resource "aws_batch_compute_environment" "sample" {
   service_role = aws_iam_role.aws_batch_service_role.arn
   type         = "MANAGED"
   depends_on   = [aws_iam_role_policy_attachment.aws_batch_service_role]
+}
+
+// Batch 작업 큐
+resource "aws_batch_job_queue" "job_queue" {
+  name     = local.resource_id
+  state    = "ENABLED"
+  priority = 1
+
+  compute_environments = [
+    aws_batch_compute_environment.compute_env.arn,
+  ]
 }
 
 // ECR
