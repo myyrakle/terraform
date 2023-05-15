@@ -157,7 +157,8 @@ resource "aws_iam_role" "aws_batch_service_role" {
           "Resource" : "*",
           "Effect" : "Allow",
           "Action" : [
-            "logs:DescribeLogGroups",
+            "logs:*",
+            "ecs:*"
           ]
         }
       ]
