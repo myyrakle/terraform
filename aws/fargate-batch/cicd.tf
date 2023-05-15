@@ -37,7 +37,7 @@ resource "aws_codebuild_project" "codebuild" {
     privileged_mode             = true
 
     environment_variable {
-      name  = "IMAGE_REPO_NAME"
+      name  = "ECR_NAME"
       value = aws_ecr_repository.ecr.name
     }
 
@@ -71,14 +71,6 @@ resource "aws_codebuild_project" "codebuild" {
   tags = local.tags
 }
 
-// code deploy
-resource "aws_codedeploy_app" "deploy" {
-  name             = local.resource_id
-  compute_platform = "ECS"
-
-  tags = local.tags
-}
-
 // code pipeline
 resource "aws_codepipeline" "codepipeline" {
   name     = local.resource_id
@@ -94,16 +86,15 @@ resource "aws_codepipeline" "codepipeline" {
 
     action {
       configuration = {
-        Owner      = var.github_user
-        Repo       = var.github_repository
-        Branch     = var.github_branch
-        OAuthToken = var.github_oauth_token
+        ConnectionArn : var.codestar_arn
+        FullRepositoryId : join("/", var.github_user, var.github_repository)
+        BranchName : var.github_branch
       }
 
       name     = "Source"
       category = "Source"
-      owner    = "ThirdParty"
-      provider = "GitHub"
+      owner    = "AWS"
+      provider = "CodeStarSourceConnection"
       version  = "1"
 
       output_artifacts = ["Source"]
@@ -124,25 +115,6 @@ resource "aws_codepipeline" "codepipeline" {
 
       configuration = {
         ProjectName = aws_codebuild_project.codebuild.name
-      }
-    }
-  }
-
-  stage {
-    name = "Deploy"
-
-    action {
-      name            = "Deploy"
-      category        = "Deploy"
-      owner           = "AWS"
-      provider        = "ECS"
-      input_artifacts = ["Build"]
-      version         = "1"
-
-      configuration = {
-        ClusterName = aws_ecs_cluster.ecs_cluster.name
-        ServiceName = aws_ecs_service.ecs_service.name
-        FileName    = "images.json"
       }
     }
   }

@@ -28,32 +28,25 @@ variable "max_vcpu" {
   default     = 16
 }
 
-# // 배포에 사용할 docker 태그입니다. 
-# variable "docker_release_tag" {
-#   description = "value of docker release tag. (e.g: latest, 1.0.0, 1.0.0-rc1)"
-#   type        = string
-#   default     = "latest"
-# }
+variable "github_user" {
+  description = "The username of the github repository."
+  type        = string
+}
 
-# variable "github_user" {
-#   description = "The username of the github repository."
-#   type        = string
-# }
+variable "github_repository" {
+  description = "The name of the github repository."
+  type        = string
+}
 
-# variable "github_repository" {
-#   description = "The name of the github repository."
-#   type        = string
-# }
+variable "github_branch" {
+  description = "The name of the github branch."
+  type        = string
+}
 
-# variable "github_branch" {
-#   description = "The name of the github branch."
-#   type        = string
-# }
-
-# variable "github_oauth_token" {
-#   description = "The oauth token for github. (e.g: ghp_KZymx3mI6f3x*****5GN3W5RItAB1fzlyi)"
-#   type        = string
-# }
+variable "codestar_arn" {
+  description = "CodeStarConnection ARN"
+  type        = string
+}
 
 // 서브넷 목록
 variable "subnet_ids" {
