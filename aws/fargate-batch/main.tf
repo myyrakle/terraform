@@ -22,7 +22,7 @@ resource "aws_batch_compute_environment" "sample" {
     max_vcpus = var.max_vcpu
 
     security_group_ids = [
-      aws_security_group.sample.id
+      aws_security_group.batch_security_group
     ]
 
     subnets = var.subnet_ids
