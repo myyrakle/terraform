@@ -14,6 +14,25 @@ provider "aws" {
   region = var.region
 }
 
+// Batch 컴퓨팅 환경
+resource "aws_batch_compute_environment" "sample" {
+  compute_environment_name = "sample"
+
+  compute_resources {
+    max_vcpus = 16
+
+    security_group_ids = [
+      aws_security_group.sample.id
+    ]
+
+    subnets = var.subnet_ids
+    type    = "FARGATE"
+  }
+
+  service_role = aws_iam_role.aws_batch_service_role.arn
+  type         = "MANAGED"
+  depends_on   = [aws_iam_role_policy_attachment.aws_batch_service_role]
+}
 
 // ECR
 // 서버 프로지버닝에 사용할 docker image를 관리합니다.
