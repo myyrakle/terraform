@@ -122,7 +122,8 @@ resource "aws_iam_role" "codepipeline_role" {
             "ecs:UpdateService",
             "codebuild:StartBuild",
             "codebuild:BatchGetBuilds",
-            "iam:PassRole"
+            "iam:PassRole",
+            "codestar-connections:*"
           ]
         }
       ]
@@ -166,7 +167,3 @@ resource "aws_iam_role" "aws_batch_service_role" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "codestar_attach" {
-  role       = aws_iam_role.aws_batch_service_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodeStarFullAccess"
-}
