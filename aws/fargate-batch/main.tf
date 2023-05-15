@@ -71,42 +71,38 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   tags = local.tags
 }
 
-// ECS 작업 정의
-resource "aws_ecs_task_definition" "task_definition" {
-  family = local.resource_id
+// Batch 작업 정의
+resource "aws_batch_job_definition" "task_definition" {
+  name = "test"
+  type = "container"
 
-  requires_compatibilities = ["FARGATE"]
+  platform_capabilities = [
+    "FARGATE",
+  ]
 
-  network_mode = "awsvpc"
+  container_properties = jsonencode({
+    command = ["ls", "-la"],
+    image   = join(":", aws_ecr_repository.ecr.repository_url, "latest")
 
-  execution_role_arn = aws_iam_role.task_execution_role.arn
-
-  memory = var.container_memory
-  cpu    = var.container_cpu
-
-  container_definitions = jsonencode([
-    {
-      name      = local.resource_id
-      image     = local.release_image
-      cpu       = 0
-      essential = true
-      portMappings = [
-        {
-          containerPort : var.portforward_container_port
-          hostPort = var.portforward_host_port
-        }
-      ]
-      entrypoint = var.docker_entrypoint
-      logConfiguration = {
-        "LogDriver" : "awslogs",
-        "Options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.log_group.name,
-          "awslogs-region" : var.region,
-          "awslogs-stream-prefix" : local.resource_id
-        }
+    resourceRequirements = [
+      {
+        type  = "VCPU"
+        value = "0.25"
+      },
+      {
+        type  = "MEMORY"
+        value = "512"
       }
-    },
-  ])
+    ]
+
+
+    environment = [
+      {
+        name  = "Key"
+        value = "Value"
+      }
+    ]
+  })
 
   tags = local.tags
 }
