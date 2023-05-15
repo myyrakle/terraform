@@ -132,3 +132,19 @@ resource "aws_iam_role" "codepipeline_role" {
   tags = local.tags
 }
 
+resource "aws_iam_role" "aws_batch_service_role" {
+  name = join("-", [var.server_name, var.environment, "batch-role"])
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "batch.amazonaws.com"
+        },
+        "Action" : ["sts:AssumeRole"]
+      }
+    ]
+  })
+}
