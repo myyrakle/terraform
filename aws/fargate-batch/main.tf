@@ -19,7 +19,7 @@ resource "aws_batch_compute_environment" "sample" {
   compute_environment_name = "sample"
 
   compute_resources {
-    max_vcpus = 16
+    max_vcpus = var.max_vcpu
 
     security_group_ids = [
       aws_security_group.sample.id

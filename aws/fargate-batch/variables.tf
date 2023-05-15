@@ -22,6 +22,12 @@ variable "system_name" {
   type        = string
 }
 
+variable "max_vcpu" {
+  description = "max vcpu"
+  type        = number
+  default     = 16
+}
+
 # // 배포에 사용할 docker 태그입니다. 
 # variable "docker_release_tag" {
 #   description = "value of docker release tag. (e.g: latest, 1.0.0, 1.0.0-rc1)"
