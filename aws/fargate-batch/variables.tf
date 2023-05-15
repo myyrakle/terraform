@@ -54,32 +54,11 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
-// docker container entrypoint
-variable "docker_entrypoint" {
-  description = "The entrypoint of the docker image. (e.g: \"sh\", \"run.sh\")"
-  type        = list(string)
-  default     = ["sh", "run.sh"]
-}
-
 // 빌드에 사용할 buildspec.yml 위치입니다.
 variable "buildspec_path" {
   description = "BuildSpec file path (e.g: \"/prod/buildspec.yml\")"
   type        = string
   default     = "buildspec.yml"
-}
-
-// 컨테이너 메모리입니다. 메가바이트 단위입니다.
-variable "container_memory" {
-  description = "The memory of the container. It is in megabytes. (e.g: 2048)"
-  type        = string
-  default     = "2048"
-}
-
-// 컨테이너에 할당할 vcpu 개수입니다. 1024가 1vcpu입니다.
-variable "container_cpu" {
-  description = "The cpu of the container. 1024 is one vcpu. (e.g: 1024)"
-  type        = string
-  default     = "1024"
 }
 
 // code build 컴퓨팅 타입입니다.
