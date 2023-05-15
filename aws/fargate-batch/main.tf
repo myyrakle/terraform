@@ -22,7 +22,7 @@ resource "aws_batch_compute_environment" "compute_env" {
     max_vcpus = var.max_vcpu
 
     security_group_ids = [
-      aws_security_group.batch_security_group
+      aws_security_group.batch_security_group.id
     ]
 
     subnets = var.subnet_ids
@@ -31,7 +31,6 @@ resource "aws_batch_compute_environment" "compute_env" {
 
   service_role = aws_iam_role.aws_batch_service_role.arn
   type         = "MANAGED"
-  depends_on   = [aws_iam_role_policy_attachment.aws_batch_service_role]
 }
 
 // Batch 작업 큐
@@ -82,7 +81,7 @@ resource "aws_batch_job_definition" "task_definition" {
 
   container_properties = jsonencode({
     command = ["ls", "-la"],
-    image   = join(":", aws_ecr_repository.ecr.repository_url, "latest")
+    image   = join(":", [aws_ecr_repository.ecr.repository_url, "latest"])
 
     resourceRequirements = [
       {

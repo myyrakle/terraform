@@ -42,11 +42,6 @@ resource "aws_codebuild_project" "codebuild" {
     }
 
     environment_variable {
-      name  = "IMAGE_TAG"
-      value = var.docker_release_tag
-    }
-
-    environment_variable {
       name  = "AWS_ACCOUNT_ID"
       value = local.account_id
     }
@@ -87,7 +82,7 @@ resource "aws_codepipeline" "codepipeline" {
     action {
       configuration = {
         ConnectionArn : var.codestar_arn
-        FullRepositoryId : join("/", var.github_user, var.github_repository)
+        FullRepositoryId : join("/", [var.github_user, var.github_repository])
         BranchName : var.github_branch
       }
 

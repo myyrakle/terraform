@@ -1,5 +1,5 @@
 resource "aws_iam_role" "task_execution_role" {
-  name = join("-", [var.server_name, var.environment, "task-execution-role"])
+  name = join("-", [var.system_name, var.environment, "task-execution-role"])
 
   # Terraform's "jsonencode" function converts a
   # Terraform expression result to valid JSON syntax.
@@ -38,7 +38,7 @@ resource "aws_iam_role" "task_execution_role" {
 
 // Code Build에 사용할 role
 resource "aws_iam_role" "codebuild_role" {
-  name = join("-", [var.server_name, var.environment, "codebuild-role"])
+  name = join("-", [var.system_name, var.environment, "codebuild-role"])
 
   # Terraform's "jsonencode" function converts a
   # Terraform expression result to valid JSON syntax.
@@ -76,7 +76,7 @@ resource "aws_iam_role" "codebuild_role" {
 
 // Code Pipeline에 사용할 role
 resource "aws_iam_role" "codepipeline_role" {
-  name = join("-", [var.server_name, var.environment, "codepipeline-role"])
+  name = join("-", [var.system_name, var.environment, "codepipeline-role"])
 
   # Terraform's "jsonencode" function converts a
   # Terraform expression result to valid JSON syntax.
@@ -133,7 +133,7 @@ resource "aws_iam_role" "codepipeline_role" {
 }
 
 resource "aws_iam_role" "aws_batch_service_role" {
-  name = join("-", [var.server_name, var.environment, "batch-role"])
+  name = join("-", [var.system_name, var.environment, "batch-role"])
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -147,4 +147,9 @@ resource "aws_iam_role" "aws_batch_service_role" {
       }
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "codestar_attach" {
+  role       = aws_iam_role.aws_batch_service_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSCodeStarFullAccess"
 }
