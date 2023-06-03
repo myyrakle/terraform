@@ -25,8 +25,9 @@ resource "aws_lambda_function" "connect_lambda" {
 
   environment {
     variables = {
-      ServerName  = var.server_name
-      ENVIRONMENT = var.environment
+      ServerName          = var.server_name
+      ENVIRONMENT         = var.environment
+      ConnectionTableName = "${local.resource_id}_connection"
     }
   }
 }
@@ -42,8 +43,9 @@ resource "aws_lambda_function" "disconnect_lambda" {
 
   environment {
     variables = {
-      ServerName  = var.server_name
-      ENVIRONMENT = var.environment
+      ServerName          = var.server_name
+      ENVIRONMENT         = var.environment
+      ConnectionTableName = "${local.resource_id}_connection"
     }
   }
 }
@@ -59,8 +61,10 @@ resource "aws_lambda_function" "default_lambda" {
 
   environment {
     variables = {
-      ServerName  = var.server_name
-      ENVIRONMENT = var.environment
+      ServerName          = var.server_name
+      ENVIRONMENT         = var.environment
+      ConnectionTableName = "${local.resource_id}_connection"
+      GatewayEndpoint     = ""
     }
   }
 }
