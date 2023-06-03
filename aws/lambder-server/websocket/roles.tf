@@ -97,6 +97,26 @@ resource "aws_iam_role" "api_gateway_role" {
   managed_policy_arns = [aws_iam_policy.api_gateway_policy.arn]
 }
 
+data "aws_iam_policy_document" "update_code_policy_data" {
+  statement {
+    actions = [
+      "lambda:UpdateFunctionCode",
+    ]
+    effect = "Allow"
+    resources = [
+      aws_lambda_function.connect_lambda.arn,
+      aws_lambda_function.disconnect_lambda.arn,
+      aws_lambda_function.default_lambda.arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "update_code_policy" {
+  name   = "${local.resource_id}-update-code-policy"
+  path   = "/"
+  policy = data.aws_iam_policy_document.update_code_policy_data.json
+}
+
 // Code Build에 사용할 role
 resource "aws_iam_role" "codebuild_role" {
   name = join("-", [local.resource_id, "codebuild-role"])
@@ -133,6 +153,11 @@ resource "aws_iam_role" "codebuild_role" {
   }
 
   tags = local.tags
+}
+
+resource "aws_iam_role_policy_attachment" "update-code-attach" {
+  role       = aws_iam_role.codebuild_role.name
+  policy_arn = aws_iam_policy.update_code_policy.arn
 }
 
 // Code Pipeline에 사용할 role

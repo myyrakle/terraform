@@ -94,12 +94,6 @@ resource "aws_apigatewayv2_integration" "default_integration" {
   passthrough_behavior = "WHEN_NO_MATCH"
 }
 
-resource "aws_apigatewayv2_integration_response" "default_integration_response" {
-  api_id                   = aws_apigatewayv2_api.gateway.id
-  integration_id           = aws_apigatewayv2_integration.disconnect_integration.id
-  integration_response_key = "/200/"
-}
-
 resource "aws_apigatewayv2_route" "default_route" {
   api_id    = aws_apigatewayv2_api.gateway.id
   route_key = "$default"
