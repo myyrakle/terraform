@@ -21,7 +21,7 @@ resource "aws_lambda_function" "connect_lambda" {
   layers        = var.lambda_layers
   runtime       = var.lambda_runtime
   handler       = "hello.handler"
-  filename      = "codes/connect.zip"
+  filename      = "codes/zip/connect.zip"
 
   environment {
     variables = {
@@ -39,7 +39,7 @@ resource "aws_lambda_function" "disconnect_lambda" {
   layers        = var.lambda_layers
   runtime       = var.lambda_runtime
   handler       = "hello.handler"
-  filename      = "codes/disconnect.zip"
+  filename      = "codes/zip/disconnect.zip"
 
   environment {
     variables = {
@@ -57,7 +57,7 @@ resource "aws_lambda_function" "default_lambda" {
   layers        = var.lambda_layers
   runtime       = var.lambda_runtime
   handler       = "hello.handler"
-  filename      = "codes/disconnect.zip"
+  filename      = "codes/zip/disconnect.zip"
 
   environment {
     variables = {
