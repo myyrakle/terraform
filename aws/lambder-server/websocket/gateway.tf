@@ -6,6 +6,11 @@ resource "aws_apigatewayv2_api" "gateway" {
   tags = local.tags
 }
 
+resource "aws_apigatewayv2_stage" "release_stage" {
+  api_id = aws_apigatewayv2_api.gateway.id
+  name   = "release"
+}
+
 resource "aws_apigatewayv2_integration" "connect_integration" {
   api_id           = aws_apigatewayv2_api.gateway.id
   integration_type = "AWS_PROXY"

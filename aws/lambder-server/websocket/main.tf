@@ -68,7 +68,7 @@ resource "aws_lambda_function" "default_lambda" {
       ServerName          = var.server_name
       ENVIRONMENT         = var.environment
       ConnectionTableName = "${local.resource_id}_connection"
-      GatewayEndpoint     = aws_apigatewayv2_api.gateway.api_endpoint
+      GatewayEndpoint     = "${aws_apigatewayv2_api.gateway.api_endpoint}/release"
     }
   }
 
