@@ -21,10 +21,11 @@
 
 - [템플릿](https://github.com/myyrakle/websocket-server-node) 프로젝트를 clone하거나 fork해서 사용합니다.
 
-## before
+## 준비물
 
-1. github에 레포지토리를 생성합니다.
-2. github sercet에 AWS_ACCESS_KEY_ID와 AWS_SECRET_ACCESS_KEY를 추가합니다.
+- 다음 명령을 사용해서 사용할 codestar 정보를 조회합니다.
+  `aws codestar-connections list-connections`
+- github에 템플릿을 참고해서 프로젝트를 생성합니다.
 
 ---
 
