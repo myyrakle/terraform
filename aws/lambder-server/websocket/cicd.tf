@@ -50,6 +50,21 @@ resource "aws_codebuild_project" "codebuild" {
       name  = "EnvironmentName"
       value = local.resource_id
     }
+
+    environment_variable {
+      name  = "CONNECT_LAMBDA"
+      value = aws_lambda_function.connect_lambda.function_name
+    }
+
+    environment_variable {
+      name  = "DISCONNECT_LAMBDA"
+      value = aws_lambda_function.disconnect_lambda.function_name
+    }
+
+    environment_variable {
+      name  = "DEFAULT_LAMBDA"
+      value = aws_lambda_function.default_lambda.function_name
+    }
   }
 
   source {
