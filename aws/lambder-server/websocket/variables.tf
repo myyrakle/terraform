@@ -23,7 +23,7 @@ variable "server_name" {
 variable "lambda_runtime" {
   description = "lambda runtime"
   type        = string
-  default     = "provided.al2"
+  default     = "nodejs16.x"
 }
 
 // Lambda layers 
@@ -32,26 +32,3 @@ variable "lambda_layers" {
   type        = list(string)
   default     = []
 }
-
-// cors 설정
-// Frontend(브라우저)와 연동할 경우 와일드카드(*)를 삭제하고 해당 호스트 주소를 추가합니다.
-variable "cors_allow_origins" {
-  description = "cors allow origins"
-  type        = list(string)
-  default     = ["*"]
-}
-
-// cors 설정
-variable "cors_allow_headers" {
-  description = "cors allow headers"
-  type        = list(string)
-  default     = ["date", "keep-alive", "content-type", "authorization"]
-}
-
-// cors 설정
-variable "cors_expose_headers" {
-  description = "cors expose headers"
-  type        = list(string)
-  default     = ["date", "keep-alive"]
-}
-
