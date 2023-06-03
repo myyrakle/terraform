@@ -44,3 +44,26 @@ variable "buildspec_path" {
   type        = string
   default     = "buildspec.yml"
 }
+
+// code build 컴퓨팅 타입입니다.
+// 다음 문서를 참고합니다. https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html
+variable "codebuild_compute_type" {
+  description = "The compute type of the codebuild. (e.g: BUILD_GENERAL1_SMALL)"
+  type        = string
+  default     = "BUILD_GENERAL1_SMALL"
+}
+
+variable "github_user" {
+  description = "The username of the github repository."
+  type        = string
+}
+
+variable "github_repository" {
+  description = "The name of the github repository."
+  type        = string
+}
+
+variable "github_branch" {
+  description = "The name of the github branch."
+  type        = string
+}

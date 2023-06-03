@@ -99,7 +99,7 @@ resource "aws_iam_role" "api_gateway_role" {
 
 // Code Build에 사용할 role
 resource "aws_iam_role" "codebuild_role" {
-  name = join("-", [var.system_name, var.environment, "codebuild-role"])
+  name = join("-", [local.resource_id, "codebuild-role"])
 
   # Terraform's "jsonencode" function converts a
   # Terraform expression result to valid JSON syntax.
@@ -137,7 +137,7 @@ resource "aws_iam_role" "codebuild_role" {
 
 // Code Pipeline에 사용할 role
 resource "aws_iam_role" "codepipeline_role" {
-  name = join("-", [var.system_name, var.environment, "codepipeline-role"])
+  name = join("-", [local.resource_id, "codepipeline-role"])
 
   # Terraform's "jsonencode" function converts a
   # Terraform expression result to valid JSON syntax.
