@@ -20,7 +20,7 @@ resource "aws_lambda_function" "connect_lambda" {
   role          = aws_iam_role.lambda_role.arn
   layers        = var.lambda_layers
   runtime       = var.lambda_runtime
-  handler       = "hello.handler"
+  handler       = "index.handler"
   filename      = "codes/zip/connect.zip"
 
   environment {
@@ -30,6 +30,8 @@ resource "aws_lambda_function" "connect_lambda" {
       ConnectionTableName = "${local.resource_id}_connection"
     }
   }
+
+  tags = local.tags
 }
 
 resource "aws_lambda_function" "disconnect_lambda" {
@@ -38,7 +40,7 @@ resource "aws_lambda_function" "disconnect_lambda" {
   role          = aws_iam_role.lambda_role.arn
   layers        = var.lambda_layers
   runtime       = var.lambda_runtime
-  handler       = "hello.handler"
+  handler       = "index.handler"
   filename      = "codes/zip/disconnect.zip"
 
   environment {
@@ -48,6 +50,8 @@ resource "aws_lambda_function" "disconnect_lambda" {
       ConnectionTableName = "${local.resource_id}_connection"
     }
   }
+
+  tags = local.tags
 }
 
 resource "aws_lambda_function" "default_lambda" {
@@ -56,7 +60,7 @@ resource "aws_lambda_function" "default_lambda" {
   role          = aws_iam_role.lambda_role.arn
   layers        = var.lambda_layers
   runtime       = var.lambda_runtime
-  handler       = "hello.handler"
+  handler       = "index.handler"
   filename      = "codes/zip/disconnect.zip"
 
   environment {
@@ -64,7 +68,9 @@ resource "aws_lambda_function" "default_lambda" {
       ServerName          = var.server_name
       ENVIRONMENT         = var.environment
       ConnectionTableName = "${local.resource_id}_connection"
-      GatewayEndpoint     = ""
+      GatewayEndpoint     = aws_apigatewayv2_api.gateway.api_endpoint
     }
   }
+
+  tags = local.tags
 }
