@@ -61,16 +61,17 @@ resource "aws_lambda_function" "default_lambda" {
   layers        = var.lambda_layers
   runtime       = var.lambda_runtime
   handler       = "index.handler"
-  filename      = "codes/zip/disconnect.zip"
+  filename      = "codes/zip/default.zip"
 
   environment {
     variables = {
       ServerName          = var.server_name
       ENVIRONMENT         = var.environment
       ConnectionTableName = "${local.resource_id}_connection"
-      GatewayEndpoint     = "${aws_apigatewayv2_api.gateway.api_endpoint}/release"
+      GatewayEndpoint     = "${replace(aws_apigatewayv2_api.gateway.api_endpoint, "wss://", "")}/release"
     }
   }
 
   tags = local.tags
 }
+
