@@ -32,3 +32,15 @@ variable "lambda_layers" {
   type        = list(string)
   default     = []
 }
+
+variable "codestar_arn" {
+  description = "CodeStarConnection ARN"
+  type        = string
+}
+
+// 빌드에 사용할 buildspec.yml 위치입니다.
+variable "buildspec_path" {
+  description = "BuildSpec file path (e.g: \"/prod/buildspec.yml\")"
+  type        = string
+  default     = "buildspec.yml"
+}
