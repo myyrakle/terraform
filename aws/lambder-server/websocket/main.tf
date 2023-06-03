@@ -14,14 +14,48 @@ provider "aws" {
   region = var.region
 }
 
-resource "aws_lambda_function" "lambda" {
-  description   = "A lambda function for ${local.resource_id}}"
-  function_name = local.resource_id
+resource "aws_lambda_function" "connect_lambda" {
+  description   = "A lambda connect function for ${local.resource_id}}"
+  function_name = "${local.resource_id}-connect"
   role          = aws_iam_role.lambda_role.arn
   layers        = var.lambda_layers
   runtime       = var.lambda_runtime
   handler       = "hello.handler"
-  filename      = "codes/axum.zip"
+  filename      = "codes/connect.zip"
+
+  environment {
+    variables = {
+      ServerName  = var.server_name
+      ENVIRONMENT = var.environment
+    }
+  }
+}
+
+resource "aws_lambda_function" "disconnect_lambda" {
+  description   = "A lambda disconnect function for ${local.resource_id}}"
+  function_name = "${local.resource_id}-disconnect"
+  role          = aws_iam_role.lambda_role.arn
+  layers        = var.lambda_layers
+  runtime       = var.lambda_runtime
+  handler       = "hello.handler"
+  filename      = "codes/disconnect.zip"
+
+  environment {
+    variables = {
+      ServerName  = var.server_name
+      ENVIRONMENT = var.environment
+    }
+  }
+}
+
+resource "aws_lambda_function" "default_lambda" {
+  description   = "A lambda default function for ${local.resource_id}}"
+  function_name = "${local.resource_id}-default"
+  role          = aws_iam_role.lambda_role.arn
+  layers        = var.lambda_layers
+  runtime       = var.lambda_runtime
+  handler       = "hello.handler"
+  filename      = "codes/disconnect.zip"
 
   environment {
     variables = {

@@ -2,8 +2,8 @@
 
 // 커넥션 정보 테이블
 resource "aws_dynamodb_table" "connection_table" {
-  name         = "${local.resource_id}-user"
-  billing_mode = "PAY_PER_REQUEST"
+  name         = "${local.resource_id}-connection"
+  billing_mode = "PAY_PER_REQUEST" # 온디맨드 요금
   hash_key     = "uuid"
   # range_key    = ""
 
