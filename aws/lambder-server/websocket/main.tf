@@ -15,7 +15,7 @@ provider "aws" {
 }
 
 resource "aws_lambda_function" "connect_lambda" {
-  description   = "A lambda connect function for ${local.resource_id}}"
+  description   = "A lambda connect function for ${local.resource_id}"
   function_name = "${local.resource_id}-connect"
   role          = aws_iam_role.lambda_role.arn
   layers        = var.lambda_layers
@@ -35,7 +35,7 @@ resource "aws_lambda_function" "connect_lambda" {
 }
 
 resource "aws_lambda_function" "disconnect_lambda" {
-  description   = "A lambda disconnect function for ${local.resource_id}}"
+  description   = "A lambda disconnect function for ${local.resource_id}"
   function_name = "${local.resource_id}-disconnect"
   role          = aws_iam_role.lambda_role.arn
   layers        = var.lambda_layers
@@ -55,7 +55,7 @@ resource "aws_lambda_function" "disconnect_lambda" {
 }
 
 resource "aws_lambda_function" "default_lambda" {
-  description   = "A lambda default function for ${local.resource_id}}"
+  description   = "A lambda default function for ${local.resource_id}"
   function_name = "${local.resource_id}-default"
   role          = aws_iam_role.lambda_role.arn
   layers        = var.lambda_layers
