@@ -35,6 +35,16 @@ resource "aws_batch_job_definition" "test" {
 
     executionRoleArn = var.task_execution_role
   })
+
+  // AWS 내부 장애시에만 재시도
+  retry_strategy {
+    attempts = 2
+
+    evaluate_on_exit {
+      action           = "EXIT"
+      on_status_reason = "Essential container in task exited"
+    }
+  }
 }
 
 
