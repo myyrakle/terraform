@@ -63,7 +63,7 @@
 11. target_group_port: target group 포트입니다.
 12. target_group_protocol
 13. target_group_protocol_version
-14. auto_scailing_max: 오토스케일링 최대 개수입니다.
+14. auto_scaling_max: 오토스케일링 최대 개수입니다.
 15. cpu_scail_out_percent: 스케일아웃을 트리거할 cpu 수치입니다.
 16. memory_scail_out_percent: 스케일아웃을 트리거할 메모리 수치입니다.
 17. codebuild_compute_type: code build 컴퓨팅 타입입니다.

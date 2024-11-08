@@ -1,6 +1,6 @@
 // 오토스케일링 구성
-resource "aws_appautoscaling_target" "auto_scailing" {
-  max_capacity       = var.auto_scailing_max
+resource "aws_appautoscaling_target" "auto_scaling" {
+  max_capacity       = var.auto_scaling_max
   min_capacity       = 1
   resource_id        = "service/${aws_ecs_service.ecs_service.name}/${aws_ecs_service.ecs_service.name}"
   role_arn           = aws_iam_role.scalable_target_role.arn
@@ -10,9 +10,9 @@ resource "aws_appautoscaling_target" "auto_scailing" {
 
 // CPU 스케일링 정책 구성입니다.
 resource "aws_appautoscaling_policy" "scaling_policy_cpu" {
-  name               = "${local.resource_id}-cpu-scailing"
+  name               = "${local.resource_id}-cpu-scaling"
   policy_type        = "TargetTrackingScaling"
-  resource_id        = aws_appautoscaling_target.auto_scailing.resource_id
+  resource_id        = aws_appautoscaling_target.auto_scaling.resource_id
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 
@@ -29,9 +29,9 @@ resource "aws_appautoscaling_policy" "scaling_policy_cpu" {
 
 // 메모리 스케일링 정책 구성입니다.
 resource "aws_appautoscaling_policy" "scaling_policy_memory" {
-  name               = "${local.resource_id}-memory-scailing"
+  name               = "${local.resource_id}-memory-scaling"
   policy_type        = "TargetTrackingScaling"
-  resource_id        = aws_appautoscaling_target.auto_scailing.resource_id
+  resource_id        = aws_appautoscaling_target.auto_scaling.resource_id
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 
