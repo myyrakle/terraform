@@ -51,3 +51,15 @@ variable "parallelization_factor" {
   type        = number
   default     = 1
 }
+
+// Lambda의 Subnet ID
+variable "subnet_id" {
+  description = "Subnet ID"
+  type        = string
+}
+
+// Lambda의 Security Group ID
+variable "security_group_id" {
+  description = "Security Group ID"
+  type        = string
+}
