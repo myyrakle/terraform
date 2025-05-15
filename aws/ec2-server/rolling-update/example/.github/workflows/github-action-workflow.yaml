@@ -1,0 +1,123 @@
+name: ".Deploy Server"
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: choice
+        description: "배포 환경 ⚠️ prod 배포 시 tag 사용"
+        default: "dev"
+        options:
+          - "prod"
+      server_name:
+        required: true
+        type: choice
+        description: "서버 이름"
+        default: "something-server"
+        options:
+          - "something-server"
+      ami_version_name:
+        required: true
+        type: string
+        description: "AMI 버전명"
+        default: "1234"
+
+env:
+  ENVIRONMENT: ${{ inputs.environment }}
+  AWS_REGION: us-east-1
+  IMAGE_TAG: ${{ github.sha }}
+  AMI_NAME: ${{ inputs.server_name }}-${{ inputs.environment }}-${{ inputs.ami_version_name }}
+  LAUNCH_TEMPLATE_NAME: ${{ inputs.environment }}-server-lt
+  AUTO_SCALING_GROUP_NAME: ${{ inputs.environment }}-bamboo-server-asg
+
+run-name: Deploy ${{ inputs.server_name }} ${{ inputs.environment }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Setup `packer`
+        run: |
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update && sudo apt-get install packer
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: packer init and validate
+        run: |
+          packer init -var "ami_name=${{ env.AMI_NAME }}" packer.pkr.hcl
+          packer validate -var "ami_name=${{ env.AMI_NAME }}" packer.pkr.hcl
+
+      - name: Build AMI Image
+        id: ami
+        run: |
+          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_KEY }}
+          export PACKER_OUTPUT=$(packer build -var "ami_name=${{ env.AMI_NAME }}" packer.pkr.hcl)
+          echo "PACKER_OUTPUT=${PACKER_OUTPUT}"
+          AMI_ID=$(echo "$PACKER_OUTPUT" | tail -n 1 | grep -o 'ami-[a-z0-9]*')
+          echo $AMI_ID
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+
+      - name: Update Launch Template
+        run: |
+          # 기존 시작 템플릿의 최신 버전 가져오기
+          CURRENT_VERSION=$(aws ec2 describe-launch-templates \
+            --launch-template-names "${{ env.LAUNCH_TEMPLATE_NAME }}" \
+            --query 'LaunchTemplates[0].LatestVersionNumber' \
+            --output text || echo "0")
+
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+          echo "Current version of the launch template: $CURRENT_VERSION"
+
+          echo "Updating existing launch template with new AMI..."
+          aws ec2 create-launch-template-version \
+            --launch-template-name "${{ env.LAUNCH_TEMPLATE_NAME }}" \
+            --version-description "Update with AMI ${{ env.AMI_ID }}" \
+            --source-version "$CURRENT_VERSION" \
+            --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID }}\"}"
+
+      - name: Update Auto Scaling Group
+        run: |
+          # 오토 스케일링 그룹 업데이트
+          aws autoscaling update-auto-scaling-group \
+            --auto-scaling-group-name "${{ env.AUTO_SCALING_GROUP_NAME }}" \
+            --launch-template LaunchTemplateName="${{ env.LAUNCH_TEMPLATE_NAME }}",Version='$Latest'
+
+      - name: Start Instance Refresh
+        run: |
+          # 인스턴스 갱신 시작
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name "${{ env.AUTO_SCALING_GROUP_NAME }}" \
+            --preferences '{"MinHealthyPercentage": 100, "InstanceWarmup": 60}'
+
+      - name: Wait for Instance Refresh
+        run: |
+          echo "Waiting for instance refresh to complete..."
+          REFRESH_STATUS="Pending"
+
+          while [ "$REFRESH_STATUS" != "Successful" ] && [ "$REFRESH_STATUS" != "Failed" ] && [ "$REFRESH_STATUS" != "Cancelled" ]; do
+            sleep 30
+            REFRESH_STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name "${{ env.AUTO_SCALING_GROUP_NAME }}" \
+              --query 'sort_by(InstanceRefreshes, &StartTime)[-1].Status' \
+              --output text)
+            echo "Current status: $REFRESH_STATUS"
+          done
+
+          if [ "$REFRESH_STATUS" == "Successful" ]; then
+            echo "Instance refresh completed successfully!"
+          else
+            echo "Instance refresh failed with status: $REFRESH_STATUS"
+            exit 1
+          fi
