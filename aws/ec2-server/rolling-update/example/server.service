@@ -1,0 +1,22 @@
+[Unit]
+Description=Server Docker Container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+ExecStartPre=-/usr/bin/docker rm -f server
+ExecStart=/usr/bin/docker run --name server \
+  --restart=unless-stopped \
+  -p 80:80 \
+  --log-driver=awslogs \
+  --log-opt awslogs-region=us-east-1 \
+  --log-opt awslogs-group=/aws/ec2/bamboo-server \
+  --log-opt awslogs-create-group=true \
+  server:latest
+ExecStop=/usr/bin/docker stop server
+
+[Install]
+WantedBy=multi-user.target
