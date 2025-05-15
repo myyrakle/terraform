@@ -158,6 +158,19 @@ resource "aws_autoscaling_group" "service_asg" {
   max_size            = var.max_size
   vpc_zone_identifier = var.private_subnet_ids
 
+  # 인스턴스 유지 관리 정책 - 가용성 우선
+  instance_maintenance_policy {
+    min_healthy_percentage = 100
+    max_healthy_percentage = 110
+  }
+
+  # 로드밸런서로도 상태 확인을 함
+  health_check_type = "ELB"
+
+  # 상태 확인 유예 기간 (초 단위)
+  # 이 기간에는 인스턴스가 초기화를 완료할 때까지 첫 번째 상태 확인을 지연시킵니다. 실행 중이 아닌 상태로 전환될 때 인스턴스가 종료되는 것을 방지하지 않습니다.
+  health_check_grace_period = 180
+
   launch_template {
     id      = aws_launch_template.start_service_launch_template.id
     version = "$Latest"
@@ -181,6 +194,6 @@ resource "aws_autoscaling_group" "service_asg" {
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes = [ desired_capacity, launch_template ]
+    ignore_changes = [ desired_capacity, launch_template, min_size, max_size ]
   }
 }

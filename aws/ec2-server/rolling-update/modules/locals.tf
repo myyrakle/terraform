@@ -1,3 +1,3 @@
 locals {
-  resource_name = join("-", [var.environment, var.service_name])
+  resource_name = join("-", [var.service_name, var.environment])
 }
