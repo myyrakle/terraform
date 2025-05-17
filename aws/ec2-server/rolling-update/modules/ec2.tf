@@ -32,7 +32,7 @@ resource "aws_iam_role_policy_attachment" "ec2_cloudwatch_agent_policy" {
 }
 
 resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "${var.service_name}-ec2-profile"
+  name = "${local.resource_name}-ec2-profile"
   role = aws_iam_role.ec2_role.name
 
   tags = {
@@ -43,7 +43,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 
 # CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "service_log_group" {
-  name              = "/aws/ec2/${var.service_name}"
+  name              = "/aws/ec2/${local.resource_name}"
   retention_in_days = var.log_retention_in_days
 
   tags = {
