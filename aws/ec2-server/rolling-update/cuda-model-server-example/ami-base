@@ -1,0 +1,74 @@
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
+
+sudo vi /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json 
+{
+  "agent": {
+    "metrics_collection_interval": 60,
+    "run_as_user": "cwagent"
+  },
+  "metrics": {
+    "namespace": "CWAgent",
+    "append_dimensions": {
+      "InstanceId": "${aws:InstanceId}",
+      "InstanceType": "${aws:InstanceType}"
+    },
+    "metrics_collected": {
+      "mem": {
+        "measurement": [
+          "mem_used_percent",
+          "mem_used",
+          "mem_total"
+        ],
+        "metrics_collection_interval": 30
+      }
+    }
+  }
+}
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -s
+# sudo tail -f /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log
+# 1. /dev/shm은 메모리에 마운트된 파일시스템
+# 2. 200MB 크기의 파일 생성
+# dd if=/dev/zero of=/dev/shm/memory-fill bs=1M count=200
+# 3. 확인
+# ls -lh /dev/shm/memory-fill
+# 4. 종료할 때는 파일 삭제
+# rm /dev/shm/memory-fill
+
+sudo apt-get install ubuntu-drivers-common -y
+sudo ubuntu-drivers autoinstall
+
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+
+# 패키지 목록 업데이트
+sudo apt-get update
+
+# NVIDIA Container Toolkit 설치
+sudo apt-get install -y nvidia-docker2
+
+sudo vi /etc/nvidia-container-runtime/config.toml
+# no-cgroups = false
+
+# sudo vi /etc/docker/daemon.json 
+# {  
+#    "runtimes": {  
+#        "nvidia": {  
+#            "args": [],  
+#            "path": "nvidia-container-runtime"  
+#        }  
+#    },  
+#    "exec-opts": ["native.cgroupdriver=cgroupfs"]  
+# } 
+
+# Docker 서비스 재시작
+sudo systemctl daemon-reload
+sudo systemctl restart docker
